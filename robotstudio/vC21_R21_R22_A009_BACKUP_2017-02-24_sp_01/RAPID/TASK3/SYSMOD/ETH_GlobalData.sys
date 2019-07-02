@@ -1,0 +1,111 @@
+MODULE ETH_GlobalData(SYSMODULE)
+    !***********************************************************************************
+    !
+    ! ETH Zurich / NCCR Digital Fabrication
+    ! HIP CO 11.1 / Gustave-Naville-Weg 1
+    ! CH-8093 Zürich
+    !
+    !***********************************************************************************
+    !
+    ! PROJECT     :  A011_RFL
+    !
+    ! FUNCTION    :  Includ all Global Data's for ETH Helper
+    !
+    ! AUTHOR      :  Philippe Fleischmann
+    !
+    ! EMAIL       :  fleischmann@arch.ethz.ch
+    !
+    ! HISTORY     :  2016.08.11 Draft
+    !
+    ! Copyright   :  ETH Zürich (CH) 2016
+    !
+    !***********************************************************************************
+    !
+    !************************************************
+    ! Declaration :     bool
+    !************************************************
+    !
+    PERS bool bWaitForJob:=FALSE;
+    !
+    !************************************************
+    ! Declaration :     num
+    !************************************************
+    !
+    PERS num nSafePosZ:=-4500;
+    !
+    !************************************************
+    ! Declaration :     string
+    !************************************************
+    !
+    PERS string stJobFrmMa:="rMainAxxx";
+    PERS string stBtnRobTasks{5}:=["T_ROB11","T_ROB12","T_ROB21","T_ROB22","Exit"];
+    !
+    !************************************************
+    ! Declaration :     robjoint
+    !************************************************
+    !
+    PERS robjoint rjSafePos:=[0,-80,70,0,10,0];
+    !
+    !************************************************
+    ! Declaration :     speeddata
+    !************************************************
+    !
+    PERS speeddata vGuedelMin:=[250,100,250,500];
+    PERS speeddata vGuedelMed:=[500,250,500,750];
+    PERS speeddata vGuedelMax:=[1000,500,1000,1000];
+    !
+    ! For Safe position
+    PERS speeddata vSafePosMin:=[250,100,250,500];
+    PERS speeddata vSafePosMed:=[500,250,500,750];
+    PERS speeddata vSafePosMax:=[1000,500,1000,1000];
+    !
+    PERS speeddata vRestorPos:=[250,100,250,500];
+    !
+    PERS speeddata vRefPointMin:=[5,100,250,500];
+    PERS speeddata vRefPointMed:=[50,100,250,500];
+    PERS speeddata vRefPointMax:=[250,500,1000,1000];
+    ! 
+    !************************************************
+    ! Declaration :     tasklist
+    !************************************************
+    !
+    PERS tasks tlAll{3}:=[["T_MASTER"],["T_ROB21"],["T_ROB22"]];
+    PERS tasks tlAllRob{2}:=[["T_ROB21"],["T_ROB22"]];
+    ! 
+    !************************************************
+    ! Declaration :     syncident
+    !************************************************
+    !
+    VAR syncident idInitTaskSta;
+    VAR syncident idInitTaskEnd;
+    !
+    VAR syncident idExeJobFrmMaSta;
+    VAR syncident idExeJobFrmMaEnd;
+    !
+    VAR syncident idMainA009Sta;
+    VAR syncident idMainA009End;
+    !
+    VAR syncident idMainA011Sta;
+    VAR syncident idMainA011End;
+    ! added sp 170220
+    VAR syncident idMainAxxxSta;
+    VAR syncident idMainAxxxEnd;
+    !
+    VAR syncident idABB_ExampleSta;
+    VAR syncident idABB_ExampleEnd;
+    ! 
+    VAR syncident idABB_CalibPosSta;
+    VAR syncident idABB_CalibPosEnd;
+    !
+    VAR syncident idABB_BreakCheckStart;
+    VAR syncident idABB_BreakCheckEnd;
+    !
+    VAR syncident idETH_AAGSta;
+    VAR syncident idETH_AAGEnd;
+    !
+    !************************************************
+    ! Declaration :     listitem
+    !************************************************
+    !
+    PERS listitem liAllAxes{9}:=[["","A1"],["","A2"],["","A3"],["","A4"],["","A5"],["","A6"],["","AX"],["","AY"],["","AZ"]];
+ENDMODULE

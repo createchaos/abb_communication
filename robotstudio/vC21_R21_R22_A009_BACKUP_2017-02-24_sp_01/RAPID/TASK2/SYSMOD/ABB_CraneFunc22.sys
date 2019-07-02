@@ -1,0 +1,205 @@
+MODULE ABB_CraneFunc22(SYSMODULE,READONLY)
+
+  !
+   !   --------------------------
+   !-- Beschreibung der Funktion:
+   !   --------------------------
+   !
+   !  Stand:  BUT/2016-08-18 
+   !
+   !  Diese Funktion ist in den folgenden 2 System Konfigurationsvarianten fahrbar:
+   !        Für VARIANTE 1:  1 MultiMove System  mit    4 Roboter
+   !        Für VARIANTE 2:  2 MultiMove Systeme mit je 2 Roboter
+   !
+   !
+   !  Wenn der Kunde (ETH) den Kran verwenden will, dann kann die Y- und Z- Richung des Kranes direkt über die autonome Kransteuerung verfahren werden
+   !  Die X-Richtung kann nicht vom Kran selber gefahren werden, da die Kran Linearachse an der Brücke des Portals befestigt ist (Portal-X-Achse)
+   !  Aus diesem Grunde muss die Robotersteurung  (Portal) die X-Achse bewegen auf Anforderung der Kransteuerung
+   !
+   !  Ablauf:
+   !  Grundbedingung:     Die 4 Roboter inkl. Portal Y- und Z-Achse müssen in der ParkPos stehen
+   !                      PS:  Diese CraneFunction läuft im Automatikbetrieb des Roboters   PZ --> Main
+
+   !  1. Anforderungssignal der Kransteuerung(en)   "diCraneModeStart"
+   !  2. Jeder Roboter prüft nun ob er nun in Parkpos steht oder nahe der Parkpos. Wenn JA fährt die Robotersteurung den Roboter
+   !     in seine Parkpos auf direktem Weg von der aktuellen Position.
+   !     Steht der Roboter nicht genügend nahe an der Parkposition, dann erscheint das Abfragemenu, ob er automatisch oder manuell 
+   !     in die Parkposition gefahren werden soll. Wenn AUTO gewählt, fährt der Roboter auf direktem Weg von der akt. Positon zur 
+   !     Parkposition. Wenn MANUELL gewählt, muss der Bediener den Roboter in die Nähe der Parkpos bewegen  mittels JoyStick
+   ! 
+   ! 3. Wenn alle Roboter in Parkposition stehen, setzt das Robotersystem das Signal(e) "doCrane1ModeActive", "doCrane2ModeActive" an die SPS. 
+   !    Diese bleiben nun dauernd anstehen
+   !
+   ! 4. Nun wartet die Robotersteuerung auf die Bewegungs-Anforderungssignale für Fahrbewegung X für  Crane1 und/oder Crane2 (+/-)
+   !    sowie Prüfung des Signals Speed Level Signal  di_Crane1_Level2  (wenn =1 dann schnellere Geschw. wenn=0, dann langsamere Geschw. )
+   !
+   !---------------------------------------------------------------------------------------------------------------------------------------- 
+   !++++++++++++++++++++++++++++++++++++++
+   !--PARAMETRIERUNG  CraneManFunction:
+   !++++++++++++++++++++++++++++++++++++++
+   !
+   !--MANUELL auf TRUE setzen wenn Multimove System mit 4 Robotern, sonst auf FALSE
+   CONST bool b_1MMsysWith4Rob:=TRUE;
+   !
+   !--MANUELL auf TRUE setzen wenn 2Multimove Systeme mit je 2 Robotern, sonst auf FALSE
+   CONST bool b_2MMsysWith2Rob:=FALSE;
+   !
+   !--MANUELL setzten: Bewegungsschrittlänge [mm] für Crane1  (Gantry X-Achse)
+   CONST num nCraneMoveStep:=10;
+   !
+   !--MANUELL setzen: Langsame Geschwindigkeit für Gantry-X-Achse [mm/s]
+   CONST num nCraneX_LowSpeed:=100;
+   !
+   !--MANUELL setzen: Schnelle Geschwindigkeit für Gantry-X-Achse [mm/s]
+   CONST num nCraneX_HighSpeed:=400;
+   !
+   
+   !--Einbindung in Main Routine des Roboters:
+   !  ---------------------------------------
+   !  PROC main()
+   !
+   !    !----------------
+   !    rCraneFunction22;
+   !    !----------------
+   !    !--weiterer Code....
+   !  ENDPROC
+   !
+   !++++++++++++++++++++++++++++++++++++++
+   !
+   !--Signale:
+   !==========
+   !  diCraneModeStart   (Kran Funktion Aktiv  --von Kransteuerung )
+   !  diCrane1MoveXPos      (Kran 1 in positver  X-Richrung verfahren)  (11)
+   !  diCrane1MoveXNeg      (Kran 1 in negativer X-Richrung verfahren)  (11)
+   !  diCrane1MoveLevel2    Höhere Geschwindigkeitslevel für Kran1
+   !
+   !  diCrane2MoveXPos     (Kran 1 in positver  X-Richrung verfahren)  (21)
+   !  diCrane2MoveXNeg     (Kran 1 in negativer X-Richrung verfahren)  (21)
+   !  diCrane2MoveLevel2    Höhere Geschwindigkeitslevel für Kran2
+   !
+   !  doCrane1ModeActive  Roboter Rob11 und Rob12 stehen in Parkposition incl. Gantry Y-Z (exkl. Gantry-X-Achse)
+   !  doCrane2ModeActive   Roboter Rob21 und Rob22 stehen in Parkposition incl. Gantry Y-Z (exkl. Gantry-X-Achse)
+   !
+
+   !----------------------------------------------------------------------------------------------------------------------------------------
+   !
+   VAR syncident sync_Crane1;
+   VAR syncident sync_Crane2;
+   VAR syncident sync_Crane3;
+   VAR syncident sync_Crane4;
+   VAR syncident sync_Crane5;
+   VAR syncident sync_Crane6;
+   VAR syncident sync_Crane7;
+   VAR syncident sync_Crane8;
+   VAR syncident sync_Crane9;
+   VAR syncident sync_Crane10;
+   !
+   VAR syncident sync_Crane21;
+   VAR syncident sync_Crane22;
+   VAR syncident sync_Crane23;
+   VAR syncident sync_Crane24;
+   VAR syncident sync_Crane25;
+   !
+   TASK PERS speeddata vCraneLow:=[1000,100,50,50];
+   TASK PERS speeddata vCraneHigh:=[1000,100,500,50];
+   !
+   TASK PERS speeddata vCraneAct:=[1000,100,50,50];
+   !
+
+   !*******************************************************************************
+   !*   Procedure  rCraneFunction22()
+   !*
+   !*   Die Robotersteuerung bewegt die Gantry-X-Achse (wenn alle 4 Roboter in Parkpos stehen)
+   !*   auf Anforderung der Kransteuerung ( Carne1/Crane2 in +/- X Richtung )
+   !*   Vorgabe von 2 Speed Leveln von der Kransteuerung
+   !*
+   !*   Für VARIANTE 1:  1 MultiMove System  mit    4 Roboter
+   !*   Für VARIANTE 2:  2 MultiMove Systeme mit je 2 Roboter
+   !*
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  18.07.16         1.0        T.Burkart     
+   !********************************************************************************
+   PROC rCraneFunction22()
+      !--
+      IF diCrane2ModeStart=1 THEN
+         IF b_1MMsysWith4Rob=TRUE THEN
+            !--1 Multimovesystem mit 4 Roboter
+            rCraneFunction22_4;
+            !------------------
+         ELSEIF b_2MMsysWith2Rob=TRUE THEN
+            !--2 Multimovesysteme mit je 2 Roboter
+            rCraneFunction22_2;
+         ENDIF
+      ENDIF
+      RETURN ;
+   ENDPROC
+
+
+   !*******************************************************************************
+   !*   Procedure  rCraneFunction22_4()
+   !*
+   !*   Die Robotersteuerung bewegt die Gantry-X-Achse (wenn alle 4 Roboter in Parkpos stehen)
+   !*   auf Anforderung der Kransteuerung ( Carne1/Crane2 in +/- X Richtung )
+   !*   Vorgabe von 2 Speed Leveln von der Kransteuerung
+   !*
+   !*   Für VARIANTE:  1 MultiMove System mit 4 Roboter
+   !*
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  13.07.16         1.0        T.Burkart     
+   !********************************************************************************
+   PROC rCraneFunction22_4()
+      !
+      !--Warten bis Rob11 in Parkpos steht
+      WaitSyncTask sync_Crane1,AllTask;
+      !
+      !--Warten bis Rob12 in Parkpos steht
+      WaitSyncTask sync_Crane2,AllTask;
+      !
+      !--Warten bis Rob21 in Parkpos steht
+      WaitSyncTask sync_Crane3,AllTask;
+      !
+      !--Check if robot and gantry y- and Z-axis close to Parkpos
+      !  otherwise Message to the operator ,Choose MANUAL or AUTOMATIC
+      !  Robot moves at the end in ParkPos  excluding Gantry axis X
+      rMoveToParkPosExcl_X;
+      !
+      !--Rob22 ist nun in Parkpos
+      WaitSyncTask sync_Crane4,AllTask;
+      !
+      !-- Warten bis Rob11 und Rob21  Ende Kranbewegung
+      WaitSyncTask sync_Crane5,AllTask;
+      RETURN ;
+   ENDPROC
+
+
+   !*******************************************************************************
+   !*   Procedure  rCraneFunction22_2()
+   !*
+   !*   Die Robotersteuerung bewegt die Gantry-X-Achse (wenn beide Roboter R21 + R22 in Parkpos stehen)
+   !*   auf Anforderung der Kransteuerung (Crane2 in +/- X Richtung )
+   !*   Vorgabe von 2 Speed Leveln von der Kransteuerung
+   !*
+   !*   Für VARIANTE:  2 MultiMove Systeme mit je 2 Robotern
+   !*
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  18.07.16         1.0        T.Burkart     
+   !********************************************************************************
+   PROC rCraneFunction22_2()
+      !
+      !--Warten bis Rob21 in Parkpos steht
+      WaitSyncTask sync_Crane21,TaskRob21Rob22;
+      !
+      !--Check if robot R22 and gantry y- and Z-axis close to Parkpos
+      !  otherwise Message to the operator ,Choose MANUAL or AUTOMATIC
+      !  Robot moves at the end in ParkPos  excluding Gantry axis X
+      rMoveToParkPosExcl_X;
+      !
+      !-- Rob22 ist nun  in Parkpositon
+      WaitSyncTask sync_Crane22,TaskRob21Rob22;
+      !
+      !--Warten bis Rob21 Ende Kranbewegung
+      WaitSyncTask sync_Crane23,TaskRob21Rob22;
+      RETURN ;
+   ENDPROC
+
+ENDMODULE

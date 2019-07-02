@@ -1,0 +1,183 @@
+MODULE ABB_BreakCheck21(SYSMODULE,READONLY)
+    !***********************************************************************************************************************************************
+    ! Module     : ABB_BreakCheck21
+    ! AUTHOR     : Jürgen Ott, ABB Switzerland AG
+    ! DATE       : 2016_10_18
+    ! Description: routine for checking the safety break function of the Z axis. Inportant for safety.
+    !
+    !
+    !*********************************************************************************************************************************************** 
+    !Targets
+    !***********************************************************************************************************************************************
+
+    PERS jointtarget pCheckBreakPos21:=[[0,-73,73,0,0,0],[20688.2,0,-4610,0,0,0]];
+
+    !***********************************************************************************************************************************************
+    !Variables
+    !***********************************************************************************************************************************************
+
+    CONST speeddata vBreakCheck:=[250,500,300,250];
+
+    !***********************************************************************************************************************************************
+    !Procedures/Functions
+    !***********************************************************************************************************************************************
+
+
+    !*******************************************************************************
+    !*   Procedure  rCheckCloseBreakCheckPos
+    !*
+    !*   Testing the position of the robot and the gantry if they are at the right position.
+    !*   IF its in position -> Set doBreakCheckRob11Ready
+    !*
+    !*  Date:          Version:    Programmer:    Reason:     
+    !*  17.10.2016         1.0        J.Ott     
+    !********************************************************************************
+    PROC rCheckCloseBreakCheckPos()
+
+        rCheckPos pCheckBreakPos21\CheckFine;
+
+        IF bROB_Close_CheckPos THEN
+            Set doBreakCheckRob21Ready;
+        ELSE
+            Reset doBreakCheckRob21Ready;
+        ENDIF
+    ENDPROC
+
+
+    !*******************************************************************************
+    !*   Procedure  rMoveToBreakCheckPos
+    !*
+    !*   Moving the Robot and the gantry to the park position
+    !*
+    !*  Date:          Version:    Programmer:    Reason:     
+    !*  17.10.2016         1.0        J.Ott     
+    !********************************************************************************
+    PROC rMoveToBreakCheckPos()
+        VAR string stCurrentToolName;
+        !
+        WaitSyncTask idABB_BreakCheckStart,tlAll;
+
+        Reset doBreakCheckRob21Ready;
+        !
+        !* GetSysData tCurrent\ObjectName:=stCurrentToolName;
+
+        !* jRobPos:=CJointT();
+        !* jpParkPos21_excl_X:=jpParkPos21;
+        !* jpParkPos21_excl_X.extax.eax_a:=jRobPos.extax.eax_a;
+        !* !--Parkposition anfahren, jedoch gantry_X-Achse nicht verschieben
+        !* MoveAbsJ jpParkPos21_excl_X,vParkPos,fine,tCurrent;            
+
+        !
+        ! Check Robot stand still
+        WaitRob\ZeroSpeed;
+        !
+        ! Store Position
+        !pStorePosBeforBreakCheck:=CRobT(\Tool:=tool0\WObj:=wobj0);
+        jpStorePosBeforBreakCheck:=CJointT();
+        !
+        ! Move Z-Axis in Check Position
+        rMoveZAxToTop;
+        ! 
+        ! Msg Start Brake Check
+        UIMsgBox
+            \Header:="Info ROB21 ready for Breack check"," "
+            \MsgLine2:=""
+            \MsgLine3:=""
+            \MsgLine4:=""
+            \MsgLine5:=""
+            \Buttons:=btnOK
+            \Icon:=iconInfo
+            \Result:=btnAnswer;
+        !
+        ! Stop Prog
+        Stop;
+        !
+        ! Restore Position befor BreackCheck 
+        !MoveJ pStorePosBeforBreakCheck,v200,fine,tool0\WObj:=wobj0;
+        MoveAbsJ jpStorePosBeforBreakCheck,v200,fine,tool0\WObj:=wobj0;
+        !
+        ! Short Time
+        WaitTime 1.0;
+        ! 
+        WaitSyncTask idABB_BreakCheckEnd,tlAll;
+        !
+    ENDPROC
+
+
+    !*******************************************************************************
+    !*   Procedure  rStartManBreakCheck
+    !*
+    !*   Starting the cyclic break check manually. The SPS starts the correspondent function and their signals
+    !*
+    !*  Date:          Version:    Programmer:    Reason:     
+    !*  17.10.2016         1.0        J.Ott     
+    !********************************************************************************
+    PROC rStartManBreakCheck()
+        Set doStartCyclicBreakCheck;
+
+        WaitDI diBreakCheckStart,1;
+        rBreakCheck21;
+
+    ENDPROC
+
+
+    !*******************************************************************************
+    !*   Procedure  rBreakCheck21
+    !*
+    !*   Routine for testing the safety break check function. 
+    !*   Procedure:  - Moving down with open breaks 
+    !*               - Moving down with closed breaks
+    !*               - Moving down with open breaks
+    !*               - Moving down with closed breaks
+    !*   The SPS is watching the signal of the Eden switch on the Z axis
+    !*
+    !*  Date:          Version:    Programmer:    Reason:     
+    !*  17.10.2016         1.0        J.Ott     
+    !********************************************************************************
+    PROC rBreakCheck21()
+        VAR string stCurrentToolName;
+        VAR jointtarget pActRobPos;
+        VAR jointtarget pTestRobPos;
+
+        IF diBreakCheckStart=1 THEN
+            Set doBreakCheckRob21Conf;
+
+            rMoveToBreakCheckPos;
+
+            rCheckCloseBreakCheckPos;
+
+            WHILE diBreakCheckStart=1 AND diBreakCheckCancel=0 DO
+
+                IF diStartMoveRob21Z=1 AND DOutput(doBreakCheckRob21Ready)=1 THEN
+                    !
+                    GetSysData tCurrent\ObjectName:=stCurrentToolName;
+                    pActRobPos:=CJointT();
+                    pTestRobPos:=pActRobPos;
+                    pTestRobPos.extax.eax_c:=pTestRobPos.extax.eax_c-100;
+
+                    MoveAbsJ pTestRobPos,vBreakCheck,fine,tCurrent;
+
+                    WaitTime 2;
+
+                ENDIF
+
+                IF diMoveRobZBack=1 THEN
+
+                    rMoveToBreakCheckPos;
+
+                    rCheckCloseBreakCheckPos;
+
+                ENDIF
+
+                WaitTime 0.2;
+            ENDWHILE
+
+            rMoveToBreakCheckPos;
+
+        ENDIF
+        Reset doBreakCheckRob11Conf;
+        Reset doStartCyclicBreakCheck;
+
+    ENDPROC
+
+ENDMODULE

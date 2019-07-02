@@ -1,0 +1,79 @@
+MODULE MoveToCalibPos (SYSMODULE)
+  !***********************************************
+  ! AUTHOR     : Roland Richner, ABB Switzerland AG
+  ! DATE       : 2016_05_13
+  !******************** declarations ********************
+  PERS jointtarget jposActual:=[[0.0941348,-0.0753429,0.0697204,-0.0496601,35.422,-0.0314786],[12878.8,92.936,4888.42,0,0,0]];
+  PERS jointtarget jposCalibration:=[[0.0941348,-0.0753429,0.0697204,-0.0496601,35.422,-0.0314786],[12878.8,92.936,-4577,0,0,0]];
+  PERS num nCalibPosExtaxX:=20000;
+  PERS num nCalibPosExtaxY:=-7079;
+  PERS num nCalibPosExtaxZ:=-4577;
+  CONST speeddata vCalibration:=[250,50,1000,500];
+  CONST listitem list{7}:=[["","X"],["","Y"],["","Z"],["","YZ"],["","XYZ"],["","IRB4600"],["","XYZ / IRB4600"]];
+  VAR num list_item;
+  !*! NoEOffs
+  !*! read out of Moc.cfg
+
+  PROC rMoveToCalibPos()
+    ! menu
+    list_item:=UIListView(
+    \Header:="Move to Calibration Position",
+    list
+    \Buttons:=btnOk
+    \Icon:=iconInfo);
+    ! read actual position
+    jposActual := CJointT();
+    jposCalibration:=jposActual;
+    ! read calibration position out of Moc.cfg
+    nCalibPosExtaxX:=20000;
+    nCalibPosExtaxY:=-7079;
+    nCalibPosExtaxZ:=-4577;
+    ! definition of desired calibration position
+    TEST list_item
+    CASE 1:
+      ! gantry X
+      jposCalibration.extax.eax_a:=nCalibPosExtaxX;
+    CASE 2:
+      ! gantry Y
+      jposCalibration.extax.eax_b:=nCalibPosExtaxY;
+    CASE 3:
+      ! gantry Z
+      jposCalibration.extax.eax_c:=nCalibPosExtaxZ;
+    CASE 4:
+      ! gantry YZ
+      jposCalibration.extax.eax_b:=nCalibPosExtaxY;
+      jposCalibration.extax.eax_c:=nCalibPosExtaxZ;
+    CASE 5:
+      ! gantry XYZ
+      jposCalibration.extax.eax_a:=nCalibPosExtaxX;
+      jposCalibration.extax.eax_b:=nCalibPosExtaxY;
+      jposCalibration.extax.eax_c:=nCalibPosExtaxZ;
+    CASE 6:
+      ! IRB4600
+      jposCalibration.robax.rax_1:=0;
+      jposCalibration.robax.rax_2:=0;
+      jposCalibration.robax.rax_3:=0;
+      jposCalibration.robax.rax_4:=0;
+      jposCalibration.robax.rax_5:=0;
+      jposCalibration.robax.rax_6:=0;
+    CASE 7:
+      ! IRB4600 / gantry XYZ
+      jposCalibration.robax.rax_1:=0;
+      jposCalibration.robax.rax_2:=0;
+      jposCalibration.robax.rax_3:=0;
+      jposCalibration.robax.rax_4:=0;
+      jposCalibration.robax.rax_5:=0;
+      jposCalibration.robax.rax_6:=0;
+      jposCalibration.extax.eax_a:=nCalibPosExtaxX;
+      jposCalibration.extax.eax_b:=nCalibPosExtaxY;
+      jposCalibration.extax.eax_c:=nCalibPosExtaxZ;
+    DEFAULT:
+      !
+    ENDTEST
+    jposCalibration.extax.eax_d:=0;
+    jposCalibration.extax.eax_e:=0;
+    jposCalibration.extax.eax_f:=0;
+    ! move to calibration position of desired axes
+    MoveAbsJ jposCalibration\NoEOffs,vCalibration,fine,tool0;
+  ENDPROC
+ENDMODULE

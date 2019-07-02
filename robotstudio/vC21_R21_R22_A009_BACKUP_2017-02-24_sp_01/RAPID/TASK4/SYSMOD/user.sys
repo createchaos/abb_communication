@@ -1,0 +1,40 @@
+
+MODULE user (SYSMODULE)
+
+ ! Predefined user data
+ !*********************
+
+ ! Declaration of numeric registers reg1...reg5
+ VAR num reg1 := 0;
+ VAR num reg2 := 0;
+ VAR num reg3 := 0;
+ VAR num reg4 := 0;
+ VAR num reg5 := 0;
+
+ ! Declaration of stopwatch clock1
+ VAR clock clock1;
+ TASK PERS tooldata measuringtip_rob1_sp_01:=[TRUE,[[271.79,0.972332,127.68],[1,0,0,0]],[5,[0,0,100],[1,0,0,0],0,0,0]];
+ TASK PERS wobjdata wobjcommon_rob1_sp_01:=[FALSE,TRUE,"",[[17259.5,7467.12,73.0932],[1,0.000396799,0.000223074,0.000134014]],[[0,0,0],[1,0,0,0]]];
+ TASK PERS tooldata measuringtip_rob1_sp_02:=[TRUE,[[258.835,2.17858,118.017],[1,0,0,0]],[5,[0,0,100],[1,0,0,0],0,0,0]];
+ TASK PERS tooldata gripper_rob1_sp_01:=[TRUE,[[-0.253856,2.05416,335.104],[0.710583,-0.703607,-0.00230544,0.00190557]],[5,[0,0,100],[1,0,0,0],0,0,0]];
+ TASK PERS tooldata grippertcp_rob1_sp_01:= [TRUE,[[-0.24715, 2.17750, 322.60461],[-0.00298, -0.00028, -0.00493, 0.99998]],[5,[0,0,100],[1,0,0,0],0,0,0]];
+ TASK PERS tooldata measuringtip_rob1_at_01:=[TRUE,[[261.45,2.38556,121.299],[1,0,0,0]],[5,[0,0,0],[1,0,0,0],0,0,0]];
+ TASK PERS tooldata gripper_rob1_at_01:=[TRUE,[[0.0293137,1.81344,334.849],[0.703227,-0.710948,-0.00264395,0.00414351]],[-1,[0,0,0],[1,0,0,0],0,0,0]];
+ TASK PERS wobjdata wobjcommon_rob1_at_01:=[FALSE,TRUE,"",[[17270.6,3889.46,70.3992],[1,0.000254593,0.000509259,-0.000135831]],[[0,0,0],[1,0,0,0]]];
+ TASK PERS tooldata measuringtip_rob1_am:=[TRUE,[[260.242,0.346724,121.666],[1,0,0,0]],[5,[0,0,0],[1,0,0,0],0,0,0]];
+ TASK PERS tooldata measuringtool_rob1_am:=[TRUE,[[0,0,0],[1,0,0,0]],[-1,[0,0,0],[1,0,0,0],0,0,0]];
+ TASK PERS tooldata gripper_rob1_am:=[TRUE,[[1.64794,4.67718,338.894],[0.714742,-0.699385,0.00062621,-0.00190965]],[5,[0,0,0],[1,0,0,0],0,0,0]];
+ TASK PERS tooldata measuringtip_rob1_at_03:=[TRUE,[[258.832,0.225699,120.22],[1,0,0,0]],[5,[0,0,100],[1,0,0,0],0,0,0]];
+ TASK PERS tooldata gripper_rob1_at_02:=[TRUE,[[0.0905273,1.59452,332.474],[0.00161999,0.00138947,-0.710535,-0.703659]],[-1,[0,0,0],[1,0,0,0],0,0,0]];
+ TASK PERS wobjdata wobjcommon_rob1_sp_02:=[FALSE,TRUE,"",[[17269.2,3876.14,77.8862],[1,0.000181554,0.000524589,0.000529155]],[[0,0,0],[1,0,0,0]]];
+ TASK PERS tooldata grippertcp_rob1_at_02:= [TRUE,[[0.08671, 1.47296, 319.97459] , [-0.00213, 0.00016, 0.00486, 0.99999]],[5,[0,0,100],[1,0,0,0],0,0,0]];
+
+ PERS wobjdata wobj_base_r1;
+ PERS wobjdata wobj_base_r2;
+ PERS wobjdata wobj_base_r3;
+ PERS wobjdata wobj_base_r4;
+ 
+ ! Template for declaration of workobject wobj1
+ !TASK PERS wobjdata wobj1 := [FALSE, TRUE, "", [[0, 0, 0],[1, 0, 0, 0]],[[0, 0, 0],[1, 0, 0, 0]]];
+
+ENDMODULE

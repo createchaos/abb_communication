@@ -1,0 +1,327 @@
+MODULE GreaseGantry21(SYSMODULE)
+
+   !--=============================================================================================================================
+   !--ACHTUNG:  Für die Verwendung dieses Moduls "GreaseGantry21"  ist auch das Modul "CraneManFunc21" in den Task T_ROB21 zu laden
+   !--=============================================================================================================================
+   !  Stand:  BUT/2016-08-18
+   !
+   !   --------------------------
+   !-- Beschreibung der Funktion:
+   !   --------------------------
+   !  Diese Funktion ist in den folgenden 2 System Konfigurationsvarianten fahrbar:
+   !        Für VARIANTE 1:  1 MultiMove System  mit    4 Roboter
+   !        Für VARIANTE 2:  2 MultiMove Systeme mit je 2 Roboter
+   !
+   !  Diese Funktion führt die Schmierung der Gantry Achsen wie folgt durch:
+   !        Alle Roboter werden in Parkpos gefahren, analog wie bei der "CraneManFunction"
+   !        Danch werden die gantry Achsen der Reihe nach wie folgt verfahren
+   !              gantry11  X,  Y,  Z
+   !              gantry12      Y,  Z
+   !              gantry21  X,  Y,  Z
+   !              gantry22      Y,  Z
+   !
+   !  Dazu muss das Signal "diGreaseRoutineStart" der SPS auf "1" gesetzt sein
+   !  Danach muss die Robotersteurung von vorne gestaretet werden PZ--> main
+   !  Nun wird die entsprechende Routinie "rGreaseGantryXX" abearbeitet
+   ! --------------------------------------------------------------------------------------------
+   !
+   !
+   !--===================================================================
+   !  PARAMETRIERUNG:
+   !---------------------
+   !
+   !--> Werte für "b_1MMsysWith4Rob"  und  " b_2MMsysWith2Rob"  im Modul "CraneManFunc21" korrekt setzen, passend zum aufgesetzten System!!
+   !
+   !--Schmierfahrtlänge ab der Parkposition des aktuellen Roboters/Gantrys
+   CONST num nGreaseLenght_X:=5000;
+   CONST num nGreaseLenght_Y:=5000;
+   CONST num nGreaseLenght_Z:=2000;
+   !
+   !--Anzahl Zyklen der Schmierfahrt
+   CONST num nGreaseCycle_X:=1;
+   CONST num nGreaseCycle_Y:=1;
+   CONST num nGreaseCycle_Z:=2;
+   !
+   !--Geschwindigkeiten [mm/s] der Schmierfahrten
+   CONST num nGreaseSpeed_X:=1000;
+   CONST num nGreaseSpeed_Y:=1000;
+   CONST num nGreaseSpeed_Z:=1000;
+   !
+   !--Einbindung in Main Routine des Roboters:
+   !  ---------------------------------------
+   !  PROC main()
+   !
+   !    !----------------
+   !    rCraneFunction21;
+   !    rGreaseGantry21;  <========
+   !    !----------------
+   !    !--weiterer Code....
+   !  ENDPROC
+   !--===================================================================
+   !
+   !
+   TASK PERS speeddata vCActGreaseSpeed:=[1000,100,1000,50];
+   !
+   !--Actual Grease position
+   TASK PERS jointtarget jActGreasePos:=[[0,-73,73,0,0,0],[30000,-25,-2915,0,0,0]];
+   !
+   VAR syncident GreaseSync1;
+   VAR syncident GreaseSync2;
+   VAR syncident GreaseSync3;
+   VAR syncident GreaseSync4;
+   VAR syncident GreaseSync5;
+   VAR syncident GreaseSync6;
+   VAR syncident GreaseSync7;
+   VAR syncident GreaseSync8;
+   VAR syncident GreaseSync9;
+   VAR syncident GreaseSync10;
+   !
+   VAR syncident GreaseSync11;
+   VAR syncident GreaseSync12;
+   VAR syncident GreaseSync13;
+   VAR syncident GreaseSync14;
+   VAR syncident GreaseSync15;
+
+
+    
+   
+   
+   !*******************************************************************************
+   !*   Procedure rGreaseGantry21 ()
+   !*
+   !*   Check if robot- and gantry X,Y- and Z-axis are close to Parkpos.
+   !*   Otherwise a Message to the operator ,Choose MANUAL or AUTOMATIC
+   !*   Robot moves at the end in ParkPos  including Gantry axis XYZ 
+   !*
+   !*   Für VARIANTE 1:  1 MultiMove System  mit    4 Roboter
+   !*   Für VARIANTE 2:  2 MultiMove Systeme mit je 2 Roboter
+   !*
+   !*   Then Grease the X,Y,Z Axis of the gantry 21 
+   !*  
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  19.07.16         1.0        T.Burkart     
+   !********************************************************************************
+   PROC rGreaseGantry21()
+      !
+      IF TRUE THEN
+         IF b_1MMsysWith4Rob=TRUE THEN
+            !--1 Multimovesystem mit 4 Roboter
+            rGreaseGantry21_4;
+            !------------------
+         ELSEIF b_2MMsysWith2Rob=TRUE THEN
+            !--2 Multimovesysteme mit je 2 Roboter
+            rGreaseGantry21_2;
+         ENDIF
+      ENDIF
+      RETURN ;
+   ENDPROC
+
+
+
+  
+
+   
+   
+   !*******************************************************************************
+   !*   Procedure rGreaseGantry21_4 ()
+   !*
+   !*   Check if robot- and gantry X,Y- and Z-axis are close to Parkpos.
+   !*   Otherwise a Message to the operator ,Choose MANUAL or AUTOMATIC
+   !*   Robot moves at the end in ParkPos  including Gantry axis XYZ 
+   !*
+   !*  Then Grease the X,Y,Z Axis of the gantry 21 
+   !*
+   !*  Für VARIANTE 1:  1 MultiMove System mit 4 Roboter
+   !*  
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  21.07.16         1.1        T.Burkart     
+   !********************************************************************************
+   PROC rGreaseGantry21_4()
+      VAR num nFK;
+      !
+      !--Warten bis Rob11 in Parkposition exkl. gantry X
+      WaitSyncTask GreaseSync1,AllTask;
+      !
+      !--Warten bis Rob12 in Parkposition exkl. gantry X
+      WaitSyncTask GreaseSync2,AllTask;
+      !
+      !--Check if robot and gantry y- and Z-axis close to Parkpos
+      !  otherwise Message to the operator ,Choose MANUAL or AUTOMATIC
+      !  Robot R21 moves at the end in ParkPos incl. gantry axis Y,Z-axis
+      rMoveToParkPosExcl_X;
+      !
+      !--Info an Rob11 Rob12 Rob22 dass Rob21 in Parkpositon exkl. gantry X
+      WaitSyncTask GreaseSync3,AllTask;
+      !
+      !--Warten bis Rob22 in Parkpositon exkl. gantry X
+      WaitSyncTask GreaseSync4,AllTask;
+      !
+      !------------------------------------------------------------------------------
+      !--Move to gantry21 to  X= 39500
+      rMoveToGantry21_XPos(39500);
+      WaitSyncTask GreaseSync9,AllTask;
+      !
+      ! Move also gantry21 X-axis in Parkposition
+      rMoveToParkPosRob21;
+      !
+      !--Info an Rob11 Rob12 Rob22 dass gantry21 X-axis in Parkpos 
+      WaitSyncTask GreaseSync10,AllTask;
+      !------------------------------------------------------------------------------
+      !
+      !--Warten bis Rob11  greasing End
+      WaitSyncTask GreaseSync5,AllTask;
+      !
+      !--Warten bis Rob12 greasing End
+      WaitSyncTask GreaseSync6,AllTask;
+      !
+      !--------------------------------------------------
+      ! Schmierbewegungen von Rob21  Gantry X-Y-Z-Achse
+      !--------------------------------------------------
+      rGreaseGantry21_Axis_X_Y_Z;
+      Set doBridge2Greased;
+      Set doCarriage21Greased;
+      !
+      !--Info an Rob11 Rob12 Rob22: Rob21 greaseing End
+      WaitSyncTask GreaseSync7,AllTask;
+      !
+      !--Warten bis Rob22 greaseing End
+      WaitSyncTask GreaseSync8,AllTask;
+      !
+      !WaitDI diGreaseRoutineStart,0;
+      WaitTime 0.5;
+      RETURN ;
+   ENDPROC
+
+
+   !*******************************************************************************
+   !*   Procedure rGreaseGantry21_2 ()
+   !*
+   !*   Check if robot- and gantry X,Y- and Z-axis are close to Parkpos.
+   !*   Otherwise a Message to the operator ,Choose MANUAL or AUTOMATIC
+   !*   Robot moves at the end in ParkPos  including Gantry axis XYZ 
+   !*
+   !*  Then Grease the X,Y,Z Axis of the gantry 21 
+   !*
+   !*  Für VARIANTE 2:  2 MultiMove Systeme mit je 2 Roboter
+   !*  
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  21.07.16         1.0        T.Burkart     
+   !********************************************************************************
+   PROC rGreaseGantry21_2()
+      VAR num nFK;
+      !
+      !--Check if robot and gantry y- and Z-axis close to Parkpos
+      !  otherwise Message to the operator ,Choose MANUAL or AUTOMATIC
+      !  Robot R21 moves at the end in ParkPos incl. gantry axis Y,Z-axis
+      rMoveToParkPosExcl_X;
+      !
+      !--Info an Rob22 dass Rob21 in Parkpos
+      WaitSyncTask GreaseSync11,TaskRob21Rob22;
+      !
+      !--Warten bis Rob22  in Parkpositon
+      WaitSyncTask GreaseSync12,TaskRob21Rob22;
+      !
+      ! Move also gantry21 X-axis in Parkposition
+      rMoveToParkPosRob21;
+      !
+      TPErase;
+      TPReadFK nFK,"Roboter 21 und 22 sind nun in Parkpos","","","","","WEITER";
+      TPErase;
+      Set doGreaseRideActive;
+      !
+      !--------------------------------------------------
+      ! Schmierbewegungen von Rob11  Gantry X-Y-Z-Achse
+      !--------------------------------------------------
+      rGreaseGantry21_Axis_X_Y_Z;
+      Set doBridge2Greased;
+      Set doCarriage21Greased;
+      !
+      !--Info an Rob22: Rob21 greaseing End
+      WaitSyncTask GreaseSync13,TaskRob21Rob22;
+      !
+      !--Warten bis Rob22 greaseing End
+      WaitSyncTask GreaseSync14,TaskRob21Rob22;
+      !
+      !-----------------------------------
+      Set doGreaseRideFinished;
+      TPErase;
+      TPWrite "Robotersystem wartet auf";
+      TPWrite "Feedbacksignal von SPS";
+      !WaitDI diGreaseRoutineStart,0;
+      WaitTime 0.5;
+      TPErase;
+      !----------------------------------
+      Reset doGreaseRideActive;
+      Reset doBridge1Greased;
+      Reset doBridge2Greased;
+      Reset doCarriage11Greased;
+      Reset doCarriage12Greased;
+      Reset doCarriage21Greased;
+      Reset doCarriage22Greased;
+      RETURN ;
+   ENDPROC
+
+
+
+   !*******************************************************************************
+   !*   Procedure  rGreaseGantry21_Axis_X_Y_Z ()
+   !*
+   !*
+   !*   Grease the X,Y,Z Axis of the gantry 21 
+   !*
+   !*  
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  19.07.16         1.0        T.Burkart     
+   !********************************************************************************
+   PROC rGreaseGantry21_Axis_X_Y_Z()
+      !
+      !--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      !--Grease gantry21 axis X:
+      !-------------------------
+      !--Beginn in Parkpos
+      vCActGreaseSpeed.v_leax:=nGreaseSpeed_X;
+      jActGreasePos:=jpParkPos21;
+      jActGreasePos.extax.eax_a:=jActGreasePos.extax.eax_a-nGreaseLenght_X;
+      !
+      !-- Move grease way  for X-axis
+      FOR i FROM 1 TO nGreaseCycle_X DO
+         MoveAbsJ jActGreasePos,vCActGreaseSpeed,fine,tool0;
+         WaitTime 0.5;
+         MoveAbsJ jpParkPos21,vCActGreaseSpeed,fine,tool0;
+      ENDFOR
+      !------------------------------------------------------------------
+      !
+      !--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      !--Grease gantry21 axis y:
+      !------------------------
+      !--Beginn in Parkpos
+      vCActGreaseSpeed.v_leax:=nGreaseSpeed_Y;
+      jActGreasePos:=jpParkPos21;
+      jActGreasePos.extax.eax_b:=jActGreasePos.extax.eax_b-nGreaseLenght_Y;
+      !
+      !-- Move grease way for Y-axis
+      FOR i FROM 1 TO nGreaseCycle_Y DO
+         MoveAbsJ jActGreasePos,vCActGreaseSpeed,fine,tool0;
+         WaitTime 0.5;
+         MoveAbsJ jpParkPos21,vCActGreaseSpeed,fine,tool0;
+      ENDFOR
+      !------------------------------------------------------------------
+      !
+      !--++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      !--Grease gantry21 axis z:
+      !------------------------
+      !--Beginn in  Parkpos
+      vCActGreaseSpeed.v_leax:=nGreaseSpeed_Z;
+      jActGreasePos:=jpParkPos21;
+      jActGreasePos.extax.eax_c:=jActGreasePos.extax.eax_c+nGreaseLenght_Z;
+      !
+      !-- Move grease way for Y-axis
+      FOR i FROM 1 TO nGreaseCycle_Z DO
+         MoveAbsJ jActGreasePos,vCActGreaseSpeed,fine,tool0;
+         WaitTime 0.5;
+         MoveAbsJ jpParkPos21,vCActGreaseSpeed,fine,tool0;
+      ENDFOR
+      !------------------------------------------------------------------
+      RETURN ;
+   ENDPROC
+ENDMODULE

@@ -1,0 +1,138 @@
+#
+# Generated backup file, do not edit.
+#
+# Originally at: /hd0a/TEMP/backup.481525
+# 2017-02-22  16:59:24
+#
+>>SYSTEM_ID:
+05-101052
+
+>>PRODUCTS_ID:
+RobotWare Version: 6.03.02.00
+SAC Version: 6.03.02.00
+
+  RobotWare Base
+  687-1 Advanced Robot Motion
+  613-1 Collision Detection
+  709-1 DeviceNet Master/Slave
+  689-1 Externally Guided Motion (EGM)
+  617-1 FlexPendant Interface
+  614-1 FTP and NFS client
+  610-1 Independent Axis
+  623-1 Multitasking
+  604-1 MultiMove Coordinated
+  612-1 Path Offset
+  611-1 Path Recovery
+  616-1 PC Interface
+  888-2 PROFINET Controller/Device
+  688-1 RobotStudio App Connect
+  885-1 SoftMove
+  English
+  608-1 World Zones
+  603-1 Absolute Accuracy
+  976-1 T10 Jogging Device
+  812-1 Production Manager
+  Drive System IRB 460/640/660/760/4600/66xx/6700
+  IRB 4600-40/2.55 Type C
+  ADU-790A in position X3
+  ADU-790A in position Y3
+  ADU-790A in position Z3
+  Drive System IRB 460/640/660/760/4600/66xx/6700
+  IRB 4600-40/2.55 Type C
+  ADU-790A in position X3
+  ADU-790A in position Y3
+  ADU-790A in position Z3
+  Standalone Controller
+  XYZ with no TCP
+  Standalone Controller
+  XYZ with no TCP
+
+>>HOME:
+All public files and directories
+
+>>SYSPAR:
+SYS.cfg
+PROC.cfg
+MMC.cfg
+EIO.cfg
+SIO.cfg
+MOC.cfg
+
+
+>>TASK1: (T_ROB21,,)
+SYSMOD/user.sys @ 
+SYSMOD/ETH_GlobalData.sys @ 
+SYSMOD/ABB_Misc.sys @ 
+PROGMOD/Axxx_Motion_Procs_21.mod @ 
+PROGMOD/Axxx_Motion_21.mod @ 
+SYSMOD/ABB_BreakCheck21.sys @ 
+SYSMOD/ABB_Example_21.sys @ 
+SYSMOD/ABB_CraneFunc21.sys @ 
+SYSMOD/LINKEDM.sys @ HIDDEN
+PROGMOD/A009_Motion_Procs_21.mod @ 
+PROGMOD/A009_ComRhino_21.mod @ 
+PROGMOD/A011_unit_conversion_utils_21.mod @ 
+PROGMOD/A011_static_correction_21.mod @ 
+PROGMOD/A011_igps_communication_21.mod @ 
+PROGMOD/A011_data_set_creation_21.mod @ 
+PROGMOD/A011_Control_21.mod @ 
+PROGMOD/A011_abb_helpers_21.mod @ 
+PROGMOD/A009_Motion_21.mod @ 
+PROGMOD/A009_Helper_21.mod @ 
+SYSMOD/GuedelHelper21.sys @ 
+SYSMOD/GreaseGantry21.sys @ 
+SYSMOD/ETH_TaskData_21.sys @ 
+PROGMOD/ETH_Helper_21.mod @ 
+PROGMOD/ETH_FatData_21.mod @ 
+PROGMOD/ETH_Fat_21.mod @ 
+PROGMOD/ETH_Control_21.mod @ 
+PROGMOD/ETH_Helper_21_old.mod @ 
+
+>>TASK2: (T_ROB22,,)
+SYSMOD/user.sys @ 
+SYSMOD/ETH_GlobalData.sys @ 
+SYSMOD/ABB_Misc.sys @ 
+SYSMOD/LINKEDM.sys @ HIDDEN
+SYSMOD/GuedelHelper22.sys @ 
+SYSMOD/GreaseGantry22.sys @ 
+SYSMOD/ETH_TaskData_22.sys @ 
+PROGMOD/ETH_Helper_22.mod @ 
+PROGMOD/ETH_FatData_22.mod @ 
+PROGMOD/ETH_Fat_22.mod @ 
+PROGMOD/ETH_Control_22.mod @ 
+SYSMOD/ABB_BreakCheck22.sys @ 
+SYSMOD/ABB_Example_22.sys @ 
+SYSMOD/ABB_CraneFunc22.sys @ 
+PROGMOD/Axxx_Motion_Procs_22.mod @ 
+PROGMOD/Axxx_Motion_22.mod @ 
+PROGMOD/A009_Motion_Procs_22.mod @ 
+PROGMOD/A009_ComRhino_22.mod @ 
+PROGMOD/A011_Control_22.mod @ 
+PROGMOD/A009_Motion_22.mod @ 
+PROGMOD/A009_Helper_22.mod @ 
+PROGMOD/ETH_Helper_22_old.mod @ 
+
+>>TASK3: (T_MASTER,,)
+SYSMOD/user.sys @ 
+SYSMOD/ETH_GlobalData.sys @ 
+SYSMOD/ETH_TaskData_Ma.sys @ 
+PROGMOD/ETH_Jobs_Ma.mod @ 
+PROGMOD/ETH_HMI_Ma.mod @ 
+PROGMOD/ETH_Control_Ma.mod @ 
+PROGMOD/ETH_FatMa.mod @ 
+PROGMOD/ETH_FatDataMa.mod @ 
+
+>>TASK4: (RECEIVER,,)
+SYSMOD/user.sys @ 
+PROGMOD/Receiver_Procs.mod @ 
+PROGMOD/Receiver.mod @ 
+PROGMOD/A009_ComRhino_r.mod @ 
+
+>>TASK5: (SENDER,,)
+PROGMOD/Sender_Procs.mod @ 
+SYSMOD/user.sys @ 
+PROGMOD/A009_ComRhino_s.mod @ 
+PROGMOD/Sender.mod @ 
+
+
+>>EOF:

@@ -1,0 +1,128 @@
+MODULE GuedelHelper22(SYSMODULE)
+    !***********************************************************************************
+    !
+    ! ETH Zurich / NCCR Digital Fabrication
+    ! HIP CO 11.1 / Gustave-Naville-Weg 1
+    ! CH-8093 Zürich
+    !
+    !***********************************************************************************
+    !
+    ! PROJECT     :  A011_RFL
+    !
+    ! FUNCTION    :  Helper Routines for Guedel AG
+    !
+    ! AUTHOR      :  Philippe Fleischmann
+    !
+    ! EMAIL       :  fleischmann@arch.ethz.ch
+    !
+    ! HISTORY     :  2016.08.09 Draft
+    !
+    ! Copyright   :  ETH Zürich (CH) 2016
+    !
+    !***********************************************************************************
+    !
+    PROC Routine1()
+        AccSet 30,30;
+        MoveAbsJ [[0,-65,65,0,0,0],[35000,-7750,-4500,0,0,0]]\NoEOffs,v1000,z50,tool0;
+    ENDPROC
+
+    PROC Routine2()
+        AccSet 30,30;
+        MoveAbsJ [[3.46786,-74.5014,69.7637,-3.8613,-88.4741,-0.460763],[35764.9,-12064.8,-4432.16,0,0,0]]\NoEOffs,v1000,z50,tool0;
+    ENDPROC
+
+    PROC rAAG()
+        AccSet 30,30;
+        MoveAbsJ [[-74.8101,3.64299,24.0372,221.102,-58.5283,-12.2541],[38454.3,-12049.9,-3981.15,0,0,0]]\NoEOffs,v100,fine,tool0;
+    ENDPROC
+
+    !************************************************
+    ! Function    :     Robot Detache
+    ! Programmer  :     Philippe Fleischmann
+    ! Date        :     2017.01.04
+    ! **************** ETH Zürich *******************
+    !
+    PROC rRobotDetache()
+        !
+        ! Move to SafePos Z
+        rMoveToSafePosZ;
+        !
+        ! Roboter in einfahrpos fahren
+        MoveAbsJ [[180,-70,75,0,0,0],[20000,-11000,-4500,0,0,0]]\NoEOffs,v300,fine,tool0;
+        !
+        ! Roboter und externe Achsen in einfahrpos fahren
+        MoveAbsJ [[180,-70,75,0,0,0],[20000,-11000,-1740,0,0,0]]\NoEOffs,v300,fine,tool0;
+        !
+        ! Rboter in TrollyPos fahren
+        MoveAbsJ [[180,-50,75,0,0,0],[20000,-11000,-1740,0,0,0]]\NoEOffs,v10,fine,tool0;
+        !
+        ! Auf Wagen absetzen und .ca 5mm überdrücken
+        MoveAbsJ [[180,-50,75,0,0,0],[20000,-11000,-1700,0,0,0]]\NoEOffs,v10,fine,tool0;
+        !
+        ! *******************************************************
+        ! Roboter Sichern und Schrauben lösen
+        ! *******************************************************
+        !
+        ! Z-Achse leicht anheben
+        MoveAbsJ [[180,-50,75,0,0,0],[20000,-11000,-1740,0,0,0]]\NoEOffs,v10,fine,tool0;
+
+    ENDPROC
+
+    !************************************************
+    ! Function    :     Robot Attache
+    ! Programmer  :     Philippe Fleischmann
+    ! Date        :     2017.01.04
+    ! **************** ETH Zürich *******************
+    !
+    PROC rRobotAttache()
+        !
+        ! Move to SafePos Z
+        ! rMoveToSafePosZ;
+        !
+        ! Z-Achse in Einfahrposition bringen
+        MoveAbsJ [[180,-50,75,0,0,0],[20000,-11000,-1740,0,0,0]]\NoEOffs,v300,fine,tool0;
+        !
+        ! *******************************************************
+        ! Roboter einfahren
+        ! *******************************************************
+        !
+        ! Z-Achse senken bis Zentrierstifte einfedern
+        MoveAbsJ [[180,-50,75,0,0,0],[20000,-11000,-1710,0,0,0]]\NoEOffs,v10,fine,tool0;
+        !
+        ! *******************************************************
+        ! Roboter fein positionieren Zentrierstifte rasten ein
+        ! *******************************************************
+        !
+        !
+        ! *******************************************************
+        ! Z-Achse manuell absenken bis auf Grundplatte
+        ! Ev. Benutzer eingabe um mm weise zu senken
+        ! *******************************************************
+        !
+        ! Auf Wagen absetzen und .ca 5mm überdrücken
+        MoveAbsJ [[180,-50,75,0,0,0],[20000,-11000,-1700,0,0,0]]\NoEOffs,v10,fine,tool0;
+        !
+        ! *******************************************************
+        ! Roboter verschrauben und Wagen sicherungen lösen
+        ! *******************************************************
+        !
+        ! Roboter von Trolly  anheben fahren
+        MoveAbsJ [[180,-50,75,0,0,0],[20000,-11000,-1740,0,0,0]]\NoEOffs,v10,fine,tool0;
+        !
+        ! Roboter und externe Achsen in ausfahrpos fahren
+        MoveAbsJ [[180,-70,75,0,0,0],[20000,-11000,-1740,0,0,0]]\NoEOffs,v100,fine,tool0;
+        !
+        ! *******************************************************
+        ! Wagen ausfahren
+        ! *******************************************************
+        !
+        ! Move to SafePos Z
+        rMoveToSafePosZ;
+        !
+        Stop;
+    ENDPROC
+
+
+
+
+ENDMODULE

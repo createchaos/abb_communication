@@ -1,0 +1,59 @@
+MODULE ETH_TaskData_Ma(SYSMODULE)
+    !***********************************************************************************
+    !
+    ! ETH Zurich / NCCR Digital Fabrication
+    ! HIP CO 11.1 / Gustave-Naville-Weg 1
+    ! CH-8093 Zürich
+    !
+    !***********************************************************************************
+    !
+    ! PROJECT     :  A011_RFL
+    !
+    ! FUNCTION    :  Includ all Task specific Data's for ETH
+    !
+    ! AUTHOR      :  Philippe Fleischmann
+    !
+    ! EMAIL       :  fleischmann@arch.ethz.ch
+    !
+    ! HISTORY     :  2016.08.11 Draft
+    !
+    ! Copyright   :  ETH Zürich (CH) 2016
+    !
+    !***********************************************************************************
+    !
+    !************************************************
+    ! Declaration :     bool
+    !************************************************
+    !
+    CONST bool bRun:=TRUE;
+
+    !
+    !************************************************
+    ! Declaration :     num
+    !************************************************
+    !
+    TASK PERS num nUiListItem:=7;
+
+    !************************************************
+    ! Declaration :     string
+    !************************************************
+    !
+
+
+    !************************************************
+    ! Declaration :     btnres
+    !************************************************
+    !
+    TASK PERS btnres btnAnswer:=1;
+
+
+    !************************************************
+    ! Declaration :     listitem
+    !************************************************
+    !
+    !CONST listitem liMaWinHome{6}:=[["","ABB Example"],["","ABB Calibration"],["","ABB Move to BreakCheckPos"],["","ETH Factory acceptance test"],["","A009 Stefana"],["","A011 iGPS"]];
+    CONST listitem liMaWinHome{7}:=[["","ABB Example"],["","ABB Calibration"],["","ABB Move to BreakCheckPos"],[""," "],["","A009 Stefana"],["","A011 iGPS"], ["","Axxx MAS"]];
+
+
+
+ENDMODULE

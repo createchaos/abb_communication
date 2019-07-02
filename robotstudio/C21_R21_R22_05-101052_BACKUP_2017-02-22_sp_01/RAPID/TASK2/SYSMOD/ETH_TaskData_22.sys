@@ -1,0 +1,96 @@
+MODULE ETH_TaskData_22(SYSMODULE)
+    !***********************************************************************************
+    !
+    ! ETH Zurich / NCCR Digital Fabrication
+    ! HIP CO 11.1 / Gustave-Naville-Weg 1
+    ! CH-8093 Zürich
+    !
+    !***********************************************************************************
+    !
+    ! PROJECT     :  A011_RFL
+    !
+    ! FUNCTION    :  Includ all Task specific Data's for ETH Helper
+    !
+    ! AUTHOR      :  Philippe Fleischmann
+    !
+    ! EMAIL       :  fleischmann@arch.ethz.ch
+    !
+    ! HISTORY     :  2016.08.09 Draft
+    !
+    ! Copyright   :  ETH Zürich (CH) 2016
+    !
+    !***********************************************************************************
+    !
+    !************************************************
+    ! Declaration :     bool
+    !************************************************
+    !
+    CONST bool bRun:=TRUE;
+
+    !
+    !************************************************
+    ! Declaration :     num
+    !************************************************
+    !
+    ! Use for all Uilists
+    TASK PERS num nUiListItem:=1;
+    !
+    ! Extern Axis Workspace Limits 
+    CONST num nMinValueY:=-12237;
+    CONST num nMaxValueY:=-2557;
+    CONST num nMinValueZ:=-4915;
+    CONST num nMaxValueZ:=-1005;
+    !
+    ! Values for Safe Position
+    CONST num nSafePos_Ax_1:=0;
+    CONST num nSafePos_Ax_2:=-80;
+    CONST num nSafePos_Ax_3:=70;
+    CONST num nSafePos_Ax_4:=0;
+    CONST num nSafePos_Ax_5:=10;
+    CONST num nSafePos_Ax_6:=0;
+    CONST num nSafePos_ExAx_A:=15000;
+    CONST num nSafePos_ExAx_B:=-3000;
+    CONST num nSafePos_ExAx_C:=-4500;
+
+    VAR num nNewAxisValue;
+    VAR num nList;
+
+
+    !************************************************
+    ! Declaration :     btnres
+    !************************************************
+    !
+    TASK PERS btnres btnAnswer:=1;
+
+
+
+
+    !
+    !************************************************
+    ! Declaration :     jointtarget
+    !************************************************
+    !
+    TASK PERS jointtarget jpTemp:=[[1.89247,-61.2158,65.4218,-155.112,47.7493,-108.064],[16467.7,-11866.4,-4915,0,0,0]];
+    TASK PERS jointtarget jpStore:=[[180,90,1.01189E-28,0,5.25048E-29,-1.2737E-28],[19136.8,-9680,-4915,0,0,0]];
+    TASK PERS jointtarget jpCurrent:=[[-169.664,-79.8938,-102.56,-2.41213,-87.5759,-264.037],[22600.1,-2760.35,-1647.09,0,0,0]];
+    TASK PERS jointtarget jpStorePosBeforBreakCheck:=[[1.8926,-61.2158,65.4218,-155.112,47.7493,-108.063],[16467.7,-11866.4,-3589.62,0,0,0]];
+    !
+    TASK PERS jointtarget jpSafePosZ:=[[0,-80,70,0,10,0],[17219.6,-11851.1,-4500,0,0,0]];
+    !
+    TASK PERS jointtarget jpNext:=[[0,-80,70,0,10,0],[32956.5,-9202.29,-4500,0,0,0]];
+    TASK PERS jointtarget jpSafePosOnTop:=[[0,-80,70,0,10,0],[23000,-9000,-4500,0,0,0]];
+    TASK PERS jointtarget jpPresPos:=[[0,-80,70,0,10,0],[37000,-12100,-4500,0,0,0]];
+    !
+    !************************************************
+    ! Declaration :     robtarget
+    !************************************************
+    !
+    !
+    TASK PERS robtarget pTemp:=[[21729.8,4115.61,593.419],[0.298747,-0.548022,0.776463,0.0867644],[-1,-1,-2,1],[24170.3,-2755.62,-3174.05,0,0,0]];
+    TASK PERS robtarget pStore:=[[17691.8,9679.99,5825],[1,1.80999E-06,-1.78814E-06,-1.97291E-06],[2,0,-1,0],[19136.8,-9680,-4915,0,0,0]];
+    TASK PERS robtarget pCurrent:=[[17691.8,9679.99,5825],[1,1.80999E-06,-1.78814E-06,-1.97291E-06],[2,0,-1,0],[19136.8,-9680,-4915,0,0,0]];
+    TASK PERS robtarget pStorePosBeforBreakCheck:=[[19269.3,9359.25,2527.77],[0.712505,-0.000136695,-0.701668,-0.000117505],[0,1,-2,1],[20156,-9357.52,-4022.55,0,0,0]];
+    !
+    CONST robtarget pRefPoint:=[[19516.34,7516.79,-173.88],[0.115074,0.881121,0.36497,-0.277814],[-1,0,2,1],[20000,-8000,-2500,0,0,0]];
+
+ENDMODULE

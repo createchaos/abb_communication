@@ -1,0 +1,383 @@
+MODULE ABB_Misc(SYSMODULE)
+    !***********************************************************************************************************************************************
+    ! Module     : ABB_Misc
+    ! AUTHOR     : Jürgen Ott, ABB Switzerland AG
+    ! DATE       : 2016_05_13
+    ! Description: different functions and routines for moving the portal/robot
+    !
+    !
+    !*********************************************************************************************************************************************** 
+    !Targets
+    !***********************************************************************************************************************************************
+    PERS jointtarget jposActual:=[[0.000159977,-0.000214857,-8.70616E-05,9.42305E-06,-0.000222507,0.00041709],[12425.9,-4045.83,-4515,0,0,0]];
+    PERS jointtarget jposCalibration:=[[0.000159977,-0.000214857,-8.70616E-05,9.42305E-06,-0.000222507,0.00041709],[18766,-4045.83,-4515,0,0,0]];
+    
+    !--Parkposition des Roboters incl. der 3 gantry Achsen (für "CraneFunction" des Robotersystems ) 
+   !!!CONST jointtarget jpParkPos21:=[[-0.632927,-87.7195,67.9402,-0.829323,-71.4861,1.31247],[30000,-2000,-4563.59,0,0,0]];
+   PERS jointtarget jpParkPos21:=[[0,-73,73,0,0,0],[20558.1,0,-4915,0,0,0]];
+   !
+   !--Parkopositon, jedoch mit aktuellem Wert der gantry-X-Achse
+   TASK PERS jointtarget jpParkPos21_excl_X:=[[0,-73,73,0,0,0],[22224.6,0,-4915,0,0,0]];
+   !
+   !--Actual Robot position
+   TASK PERS jointtarget jRobPos:=[[0.000172319,-73,72.9998,-1.64304E-05,-0.00055012,0.00244609],[22224.6,-0.00670653,-2615.33,0,0,0]];
+   !
+
+    !***********************************************************************************************************************************************
+    !Variables
+    !***********************************************************************************************************************************************
+    !--Geschwindigkeit um in Parkposition zu fahren
+   CONST speeddata vParkPos:=[250,500,300,250];
+   !
+   TASK PERS tooldata tCurrent:=[TRUE,[[0,0,0],[1,0,0,0]],[0.001,[0,0,0.001],[1,0,0,0],0,0,0]];
+   !
+   TASK PERS bool bROB_Close_CheckPos:=TRUE;
+   !
+   PERS tasks AllTask{4}:=[["T_ROB11"],["T_ROB12"],["T_ROB21"],["T_ROB22"]];
+   !
+   PERS tasks TaskRob21Rob22{2}:=[["T_ROB21"],["T_ROB22"]];
+   
+    !***********************************************************************************************************************************************
+    !Procedures/Functions
+    !***********************************************************************************************************************************************
+    
+    !*******************************************************************************
+   !*   Procedure  rCheckPos
+   !*
+   !*   Prüfen ob der Roboter in der Nähe der Parkposition steht
+   !*   "nMaxDiff" in [° +/-] für alle 6  Roboter Achsen und der Gantry Y- und Z-Achse
+   !*
+   !*   OUTPUT:  bROB_Close_CheckPos  (TRUE or FALSE)
+   !*
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  13.07.16         1.0        T.Burkart     
+   !********************************************************************************
+   PROC rCheckPos(jointtarget jpCheckPos\switch CheckFine)
+      !-------------------------------------------------
+      VAR num nMaxDiff_A1;
+      VAR num nMaxDiff_A2;
+      VAR num nMaxDiff_A3;
+      VAR num nMaxDiff_A4;
+      VAR num nMaxDiff_A5;
+      VAR num nMaxDiff_A6;
+      !------------------------
+      VAR num nMaxDiff_gantryY;
+      VAR num nMaxDiff_gantryZ;
+      !-------------------------
+      !
+      IF Present(CheckFine) THEN
+          !--> Definition of the valid ParkPos Range
+          !--max. Tolerances [+/- in °] per Robot-axis
+          nMaxDiff_A1:=5;
+          nMaxDiff_A2:=5;
+          nMaxDiff_A3:=5;
+          nMaxDiff_A4:=5;
+          nMaxDiff_A5:=5;
+          nMaxDiff_A6:=3;
+          !--max. Tolerance [+/- mm] per gantry-axis
+          nMaxDiff_gantryY:=5;
+          nMaxDiff_gantryZ:=5;
+      ELSE
+          !--> Definition of the valid ParkPos Range
+          !--max. Tolerances [+/- in °] per Robot-axis
+          nMaxDiff_A1:=30;
+          nMaxDiff_A2:=5;
+          nMaxDiff_A3:=10;
+          nMaxDiff_A4:=180;
+          nMaxDiff_A5:=90;
+          nMaxDiff_A6:=180;
+          !--max. Tolerance [+/- mm] per gantry-axis
+          nMaxDiff_gantryY:=300;
+          nMaxDiff_gantryZ:=300;
+      ENDIF
+      !
+      !
+      !--Read the actual robot angle of each axis, incl. gantry axis
+      jRobPos:=CJointT();
+      !------------------
+      bROB_Close_CheckPos:=TRUE;
+      IF jRobPos.robax.rax_1<(jpCheckPos.robax.rax_1-nMaxDiff_A1) bROB_Close_CheckPos:=FALSE;
+      IF jRobPos.robax.rax_1>(jpCheckPos.robax.rax_1+nMaxDiff_A1) bROB_Close_CheckPos:=FALSE;
+      !
+      IF jRobPos.robax.rax_2<(jpCheckPos.robax.rax_2-nMaxDiff_A2) bROB_Close_CheckPos:=FALSE;
+      IF jRobPos.robax.rax_2>(jpCheckPos.robax.rax_2+nMaxDiff_A2) bROB_Close_CheckPos:=FALSE;
+      !
+      IF jRobPos.robax.rax_3<(jpCheckPos.robax.rax_3-nMaxDiff_A3) bROB_Close_CheckPos:=FALSE;
+      IF jRobPos.robax.rax_3>(jpCheckPos.robax.rax_3+nMaxDiff_A3) bROB_Close_CheckPos:=FALSE;
+      !
+      IF jRobPos.robax.rax_4<(jpCheckPos.robax.rax_4-nMaxDiff_A4) bROB_Close_CheckPos:=FALSE;
+      IF jRobPos.robax.rax_4>(jpCheckPos.robax.rax_4+nMaxDiff_A4) bROB_Close_CheckPos:=FALSE;
+      !
+      IF jRobPos.robax.rax_5<(jpCheckPos.robax.rax_5-nMaxDiff_A5) bROB_Close_CheckPos:=FALSE;
+      IF jRobPos.robax.rax_5>(jpCheckPos.robax.rax_5+nMaxDiff_A5) bROB_Close_CheckPos:=FALSE;
+      !
+      IF jRobPos.robax.rax_6<(jpCheckPos.robax.rax_6-nMaxDiff_A6) bROB_Close_CheckPos:=FALSE;
+      IF jRobPos.robax.rax_6>(jpCheckPos.robax.rax_6+nMaxDiff_A6) bROB_Close_CheckPos:=FALSE;
+      !
+      !--Gantry y-axis
+      IF jRobPos.extax.eax_b<(jpCheckPos.extax.eax_b-nMaxDiff_gantryY) bROB_Close_CheckPos:=FALSE;
+      IF jRobPos.extax.eax_b>(jpCheckPos.extax.eax_b+nMaxDiff_gantryY) bROB_Close_CheckPos:=FALSE;
+      !
+      !--Gantry z-axis
+      IF jRobPos.extax.eax_c<(jpCheckPos.extax.eax_c-nMaxDiff_gantryZ) bROB_Close_CheckPos:=FALSE;
+      IF jRobPos.extax.eax_c>(jpCheckPos.extax.eax_c+nMaxDiff_gantryZ) bROB_Close_CheckPos:=FALSE;
+      RETURN ;
+   ENDPROC
+
+
+
+   !*******************************************************************************
+   !*   Procedure  rMoveToParkPosExcl_X()
+   !*
+   !*   Check if robot- and gantry Y- and Z-axis are close to Parkpos.
+   !*   Otherwise a Message to the operator ,Choose MANUAL or AUTOMATIC
+   !*   Robot moves at the end in ParkPos  excluding Gantry axis X 
+   !*   Gantry X axis will stay in the actual position
+   !*  
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  20.07.16         1.0        T.Burkart     
+   !********************************************************************************
+   PROC rMoveToParkPosExcl_X(\switch Auto)
+      !----------------------
+      VAR listitem li_List1{2}:=[["","MANUAL              --> Move it manually by Joy Stick"],["","AUTOMATIC       --> Robot moves autom. direkt to Parkpos"]];
+      VAR num nListItem;
+      VAR bool bAutoMove:=FALSE;
+      !----------------------
+      VAR string stCurrentToolName;
+      !
+      GetSysData tCurrent\ObjectName:=stCurrentToolName;
+      
+      IF Present(Auto) THEN
+          bAutoMove:=TRUE;
+      ENDIF
+      !
+      !--Prüfen ob der Roboter und die Gantry Y und Z -Achse genügend nahe zur Parkpos stehen
+      rCheckPos jpParkPos21;
+      !
+      IF bROB_Close_CheckPos=TRUE THEN
+         jRobPos:=CJointT();
+         jpParkPos21_excl_X:=jpParkPos21;
+         jpParkPos21_excl_X.extax.eax_a:=jRobPos.extax.eax_a;
+         !--Parkposition anfahren, jedoch gantry_X-Achse nicht verschieben
+         MoveAbsJ jpParkPos21_excl_X,vParkPos,fine,tCurrent;
+         !
+      ELSEIF bROB_Close_CheckPos=FALSE THEN
+         WHILE bROB_Close_CheckPos=FALSE DO
+            !--------------------------------------------------------
+            IF bAutoMove THEN
+                nListItem:=2;
+            ELSE
+                nListItem:=UIListView(
+                \Header:="Rob_C11 not in ParkPos-Area, How to move?",
+                li_list1
+                \Buttons:=btnOk
+                \Icon:=iconInfo);
+            ENDIF
+            !---------------------------------------------------------
+            IF nListItem=1 THEN
+               !--[ Move robot manuell ]-------------
+               UIMsgBox\Header:="Move Robot manually in ParkPos-Area",
+               "   by using the Joy Stick."
+               \MsgLine2:="   Move the robot- and gantry Y- and Z- axis"
+               \Buttons:=btnOK
+               \Icon:=iconInfo;
+               !------------------
+               jRobPos:=CJointT();
+               rCheckPos jpParkPos21;
+               IF bROB_Close_CheckPos=TRUE THEN
+                  jpParkPos21_excl_X:=jpParkPos21;
+                  jpParkPos21_excl_X.extax.eax_a:=jRobPos.extax.eax_a;
+                  !--Parkposition anfahren, jedoch gantry_X-Achse nicht verschieben
+                  MoveAbsJ jpParkPos21_excl_X,vParkPos,fine,tCurrent;
+               ENDIF
+            ELSE
+               !--[ Move robot automatically ] --------- 
+               IF NOT bAutoMove THEN
+                   UIMsgBox\Header:="Robot moves automatically to ParkPos",
+                   "   by the direct way from the actual positon."
+                   \MsgLine2:="   Take care that this area is free!!"
+                   \Buttons:=btnOK
+                   \Icon:=iconWarning;
+               ENDIF
+               !------------------
+               jRobPos:=CJointT();
+               !
+               !--[Schritt 1]: Anfahren der gantry Z-Parkpos
+               jRobPos.extax.eax_c:=jpParkPos21.extax.eax_c;
+               MoveAbsJ jRobPos,vParkPos,fine,tCurrent;
+               !
+               !--[Schritt 2]: Anfahren der Parkpos aller 6 Rob Achsen
+               jpParkPos21_excl_X:=jpParkPos21;
+               jpParkPos21_excl_X.extax.eax_a:=jRobPos.extax.eax_a;
+               jpParkPos21_excl_X.extax.eax_b:=jRobPos.extax.eax_b;
+               MoveAbsJ jpParkPos21_excl_X,vParkPos,fine,tCurrent;
+               !
+               !--[Schritt 3]:  Anfahren der gantry Y-Parkpos
+               jpParkPos21_excl_X.extax.eax_b:=jpParkPos21.extax.eax_b;
+               MoveAbsJ jpParkPos21_excl_X,vParkPos,fine,tCurrent;
+               !
+               bROB_Close_CheckPos:=TRUE;
+               !
+            ENDIF
+         ENDWHILE
+      ENDIF
+      RETURN ;
+   ENDPROC
+
+
+
+
+   !*******************************************************************************
+   !*   Procedure  rMoveTo_ParkPosRob11()
+   !*
+   !*   Anfahren der Roboter Parkposition Rob11 inkl. der gantry xyz Achse
+   !*
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  13.07.16         1.0        T.Burkart     
+   !********************************************************************************
+   PROC rMoveToParkPosRob21()
+      !--
+      VAR string stCurrentToolName;
+      VAR jointtarget joints;
+      GetSysData tCurrent\ObjectName:=stCurrentToolName;
+      !
+      MoveAbsJ jpParkPos21,vParkPos,fine,tCurrent;
+      RETURN ;
+   ENDPROC
+
+
+   !********************************************************************************
+   !*
+   !*  Move the gantry X Axis to  "nGantry"  (all other axis stay in the actual pos
+   !*  
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  17.08.16         1.0        T.Burkart     
+   !********************************************************************************
+   PROC rMoveToGantry21_XPos(Num nGantryX)
+      !
+      VAR jointtarget jRobPos;
+      VAR jointtarget jRobPosNewGantryX;
+      VAR num nNewGantryXPos;
+      !
+      VAR string stCurrentToolName;
+      !-----------------------------------------
+      IF Present(nGantryX) THEN
+          nNewGantryXPos:=nGantryX;
+      ELSE
+          nNewGantryXPos:=UINumEntry(
+            \Header:="Move Gantry X"
+            \Message:="Type in the new Position of the X Axis."
+            \Icon:=iconInfo
+            \InitValue:=0
+            \MinValue:=0
+            \MaxValue:=37206
+            \AsInteger);
+      ENDIF
+      jRobPos:=CJointT();
+      jRobPosNewGantryX:=jRobPos;
+      !
+      jRobPosNewGantryX.extax.eax_a:=nNewGantryXPos;
+      GetSysData tCurrent\ObjectName:=stCurrentToolName;
+      !
+      !--X-Pos "nGantry" anfahren mit akt. Pos des Roboters Achse 1..6 und gantry y ,z
+      MoveAbsJ jRobPosNewGantryX,vParkPos,fine,tCurrent;
+      RETURN ;
+   ENDPROC
+    
+    
+   !********************************************************************************
+   !*
+   !*  Move the calibration position. 
+   !*  
+   !*  Date:          Version:    Programmer:    Reason:     
+   !*  2016_07_07         1.0        R.Richner     
+   !********************************************************************************
+    PROC rMoveToCalibPos()
+        VAR num nCalibPosExtaxX:=20156;
+        VAR num nCalibPosExtaxY:=-5150;
+        VAR num nCalibPosExtaxZ:=-4515;
+        VAR speeddata vCalibration:=[250,50,1000,500];
+        VAR listitem list{7}:=[["","X"],["","Y"],["","Z"],["","YZ"],["","XYZ"],["","IRB4600"],["","XYZ / IRB4600"]];
+        VAR num list_item;
+        !*! NoEOffs
+        !*! read out of Moc.cfg
+    
+        !
+        ! Insert from 15.9.16pf
+        !WaitSyncTask idABB_CalibPosSta,tlAll;
+        TPWrite "ABB CalibPos Start";
+        ! 
+        ! menu
+        list_item:=UIListView(
+        \Header:="Move to Calibration Position",
+        list
+        \Buttons:=btnOk
+        \Icon:=iconInfo);
+        ! read actual position
+        jposActual:=CJointT();
+        jposCalibration:=jposActual;
+        ! read calibration position out of Moc.cfg
+        nCalibPosExtaxX:=20156;
+        nCalibPosExtaxY:=-5150;
+        nCalibPosExtaxZ:=-4515;
+        ! definition of desired calibration position
+        TEST list_item
+        CASE 1:
+            ! gantry X
+            jposCalibration.extax.eax_a:=nCalibPosExtaxX;
+        CASE 2:
+            ! gantry Y
+            jposCalibration.extax.eax_b:=nCalibPosExtaxY;
+        CASE 3:
+            ! gantry Z
+            jposCalibration.extax.eax_c:=nCalibPosExtaxZ;
+        CASE 4:
+            ! gantry YZ
+            jposCalibration.extax.eax_b:=nCalibPosExtaxY;
+            jposCalibration.extax.eax_c:=nCalibPosExtaxZ;
+        CASE 5:
+            ! gantry XYZ
+            jposCalibration.extax.eax_a:=nCalibPosExtaxX;
+            jposCalibration.extax.eax_b:=nCalibPosExtaxY;
+            jposCalibration.extax.eax_c:=nCalibPosExtaxZ;
+        CASE 6:
+            ! IRB4600
+            jposCalibration.robax.rax_1:=0;
+            jposCalibration.robax.rax_2:=0;
+            jposCalibration.robax.rax_3:=0;
+            jposCalibration.robax.rax_4:=0;
+            jposCalibration.robax.rax_5:=0;
+            jposCalibration.robax.rax_6:=0;
+        CASE 7:
+            ! IRB4600 / gantry XYZ
+            jposCalibration.robax.rax_1:=0;
+            jposCalibration.robax.rax_2:=0;
+            jposCalibration.robax.rax_3:=0;
+            jposCalibration.robax.rax_4:=0;
+            jposCalibration.robax.rax_5:=0;
+            jposCalibration.robax.rax_6:=0;
+            jposCalibration.extax.eax_a:=nCalibPosExtaxX;
+            jposCalibration.extax.eax_b:=nCalibPosExtaxY;
+            jposCalibration.extax.eax_c:=nCalibPosExtaxZ;
+        DEFAULT:
+            !
+        ENDTEST
+        jposCalibration.extax.eax_d:=0;
+        jposCalibration.extax.eax_e:=0;
+        jposCalibration.extax.eax_f:=0;
+        ! move to calibration position of desired axes
+        MoveAbsJ jposCalibration\NoEOffs,vCalibration,fine,tool0;
+        !
+        ! Insert from 15.9.16pf
+        WaitSyncTask idABB_CalibPosEnd,tlAll;
+        TPWrite "ABB CalibPos End";
+        ! 
+    ENDPROC
+    
+    
+    
+    PROC rMoveToPosition()
+		MoveAbsJ [[0,0,0,0,0,0],[36000,-3500,-3500,0,0,0]]\NoEOffs, v1000, z50, tool0;
+	ENDPROC
+    
+ENDMODULE

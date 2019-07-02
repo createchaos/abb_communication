@@ -1,0 +1,45 @@
+MODULE GuedelHelper21(SYSMODULE)
+    !***********************************************************************************
+    !
+    ! ETH Zurich / NCCR Digital Fabrication
+    ! HIP CO 11.1 / Gustave-Naville-Weg 1
+    ! CH-8093 Zürich
+    !
+    !***********************************************************************************
+    !
+    ! PROJECT     :  A011_RFL
+    !
+    ! FUNCTION    :  Helper Routines for Guedel AG
+    !
+    ! AUTHOR      :  Philippe Fleischmann
+    !
+    ! EMAIL       :  fleischmann@arch.ethz.ch
+    !
+    ! HISTORY     :  2016.08.09 Draft
+    !
+    ! Copyright   :  ETH Zürich (CH) 2016
+    !
+    !***********************************************************************************
+    !
+    PROC Routine1()
+        AccSet 30,30;
+        MoveAbsJ [[0,-65,65,0,0,0],[23000,-4500,-4500,0,0,0]]\NoEOffs,v1000,z50,tool0;
+    ENDPROC
+
+    PROC Routine2()
+        AccSet 30,30;
+        MoveAbsJ [[7.37997,-79.9676,65.2972,179.457,77.8502,-187.169],[35764.9,-569.877,-4329.67,0,0,0]]\NoEOffs,v1000,z50,tool0;
+    ENDPROC
+
+    PROC rAAG()
+        ! Startpos
+        AccSet 30,30;
+        MoveAbsJ [[72.4541,7.73282,18.7957,150.548,-54.557,-190.316],[38454.3,-196.968,-3981.15,0,0,0]]\NoEOffs,v100,fine,tool0;
+    ENDPROC
+
+
+
+
+
+
+ENDMODULE
