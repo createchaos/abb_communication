@@ -873,6 +873,11 @@ class ABBCommunication(ClientContainer):
     # =================================================================================
     def set_wobj_base(self):
         self.int_wobj = 2
+        
+    # =================================================================================
+    # Edvard add for ARC574
+    def set_wobj_to_num(self, num_wobj):
+        self.int_wobj = num_wobj
 
     # =============================== workobjects Andreas =============================
     def set_wobj_stu_pick(self):
