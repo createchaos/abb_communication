@@ -825,54 +825,57 @@ class ABBCommunication(ClientContainer):
         self.int_zonedata = 10
     # =================================================================================
 
-    def set_tool0(self):
-        # toolnumber: 0 = tool0, 1 = vacgrip_vert, 2 = hokuyo
-        self.int_tool = 0
-    # =================================================================================
-    def set_tool_meshmould(self):
-        # toolnumber: 0 = tool0, 1 = meshmould, 2 = hokuyo
-        self.int_tool = 1
-    # =================================================================================
-    def set_tool_lrf(self):
-        # toolnumber: 0 = tool0, 1 = vacgrip_vert, 2 = hokuyo
-        self.int_tool = 2
-    # =================================================================================
-    def set_tool_concrete_surface(self, ttype="puncher"):
-        # toolnumber: 0 = tool0, 1 = meshmould, 2 = hokuyo, 3 = puncher, 4 = roller, 5 = sweeper
-        if ttype == "puncher":
-            self.int_tool = 3
-        elif ttype == "roller":
-            self.int_tool = 4
-        else: # ttype = "sweeper"
-            self.int_tool = 5
-    # =================================================================================
-    def set_tool_mtip(self):
-        # toolnumber: 0 = tool0, 1 = meshmould, 2 = hokuyo
-        self.int_tool = 6
+    def set_tool_to_num(self, num_tool):
+        self.int_tool = num_tool
 
-    #################### tools stefana #######################
-    def set_tool_lws_gripper(self):
-        self.int_tool = 7
+    # def set_tool0(self):
+    #     # toolnumber: 0 = tool0, 1 = vacgrip_vert, 2 = hokuyo
+    #     self.int_tool = 0
+    # # =================================================================================
+    # def set_tool_meshmould(self):
+    #     # toolnumber: 0 = tool0, 1 = meshmould, 2 = hokuyo
+    #     self.int_tool = 1
+    # # =================================================================================
+    # def set_tool_lrf(self):
+    #     # toolnumber: 0 = tool0, 1 = vacgrip_vert, 2 = hokuyo
+    #     self.int_tool = 2
+    # # =================================================================================
+    # def set_tool_concrete_surface(self, ttype="puncher"):
+    #     # toolnumber: 0 = tool0, 1 = meshmould, 2 = hokuyo, 3 = puncher, 4 = roller, 5 = sweeper
+    #     if ttype == "puncher":
+    #         self.int_tool = 3
+    #     elif ttype == "roller":
+    #         self.int_tool = 4
+    #     else: # ttype = "sweeper"
+    #         self.int_tool = 5
+    # # =================================================================================
+    # def set_tool_mtip(self):
+    #     # toolnumber: 0 = tool0, 1 = meshmould, 2 = hokuyo
+    #     self.int_tool = 6
 
-    def set_tool_stu_gripper(self):
-        self.int_tool = 8
+    # #################### tools stefana #######################
+    # def set_tool_lws_gripper(self):
+    #     self.int_tool = 7
 
-    def set_tool_mas_gripper(self):
-        self.int_tool = 9
+    # def set_tool_stu_gripper(self):
+    #     self.int_tool = 8
 
-    def set_tool_mas_magazine(self):
-        self.int_tool = 10
+    # def set_tool_mas_gripper(self):
+    #     self.int_tool = 9
+
+    # def set_tool_mas_magazine(self):
+    #     self.int_tool = 10
     ###########################################################
 
     # =================================================================================
-    def set_wobj_0(self):
-        self.int_wobj = 0
-    # =================================================================================
-    def set_wobj_common(self):
-        self.int_wobj = 1
-    # =================================================================================
-    def set_wobj_base(self):
-        self.int_wobj = 2
+    # def set_wobj_0(self):
+    #     self.int_wobj = 0
+    # # =================================================================================
+    # def set_wobj_common(self):
+    #     self.int_wobj = 1
+    # # =================================================================================
+    # def set_wobj_base(self):
+    #     self.int_wobj = 2
         
     # =================================================================================
     # Edvard add for ARC574
@@ -880,11 +883,11 @@ class ABBCommunication(ClientContainer):
         self.int_wobj = num_wobj
 
     # =============================== workobjects Andreas =============================
-    def set_wobj_stu_pick(self):
-        self.int_wobj = 3
+    # def set_wobj_stu_pick(self):
+    #     self.int_wobj = 3
 
-    def set_wobj_stu_base(self):
-        self.int_wobj = 4
+    # def set_wobj_stu_base(self):
+    #     self.int_wobj = 4
 
 
 if __name__ == '__main__':
