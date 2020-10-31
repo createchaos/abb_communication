@@ -2,7 +2,7 @@
 
 <h2>Installation</h2>
 
-_Below is the Documentation needed for the communication library too control the ABB robots at the ECL at Princeton University._
+_Below is the Documentation needed for setting up communication the ABB robots at the ECL._
 
 <h3> Rhino6 Documentation: Downloading </h3>
 
