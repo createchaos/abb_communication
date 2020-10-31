@@ -155,8 +155,8 @@ _In part 2 when we downloaded compas and compas\_fab we had to add them to rhino
 
 
 
+<h2>Operation</h2>
 
-## Use
 To connect to robot: <br>
 ping robot ip address from your computer to ensure it can connect <br>
 From robot flex pendant start all three tasks <br>
