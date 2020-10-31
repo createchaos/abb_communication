@@ -1,26 +1,6 @@
-## Installation
-Clone repository to your computer <br>
-In Rhino: python editor - options - tools: Add parent directory to paths. <br>
-On the robot controller: Add tasks: 1. Sender, 2. Receiver, + per robot one motion task: T_ROBx 
-
-## Use
-To connect to robot: <br>
-ping robot ip address from your computer to ensure it can connect <br>
-From robot flex pendant start all three tasks <br>
-From gh file: press "init" then "robot on" <br>
-If connection succesful, the pendenant wil give you a message "ip address connected" <br>
-Now you can send commands to the robot from your gh script <br>
-
-
-
-
-
-
-
-
-
-
 <h1>ABB Communication</h1>
+
+<h2>Installation</h2>
 
 _Below is the Documentation needed for the communication library too control the ABB robots at the ECL at Princeton University._
 
@@ -170,3 +150,18 @@ _In part 2 when we downloaded compas and compas\_fab we had to add them to rhino
     <img src="screenGIFs/adding file to rhino.gif" width="60%"> <br/>
 5) Finally save the rhino file wherever you want. This makes it so that Rhino remembers the paths.
 6) Done!
+
+
+
+
+
+
+## Use
+To connect to robot: <br>
+ping robot ip address from your computer to ensure it can connect <br>
+From robot flex pendant start all three tasks <br>
+From gh file: press "init" then "robot on" <br>
+If connection succesful, the pendenant wil give you a message "ip address connected" <br>
+Now you can send commands to the robot from your gh script <br>
+
+
