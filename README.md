@@ -22,7 +22,7 @@ Now you can send commands to the robot from your gh script <br>
 
 <h1>ABB Communication</h1>
 
-_Below is the Documentation needed for the communication library too control the ABB robots at the ECL._
+_Below is the Documentation needed for the communication library too control the ABB robots at the ECL at Princeton University._
 
 <h3> Rhino6 Documentation: Downloading </h3>
 
@@ -30,14 +30,14 @@ _Downloading Rhino is already listed on Princeton Websites. So to install the pr
 
 <h3> Running Rhino abroad: </h3>
 
-_Rhino runs on a_ [_zoo server_](https://wiki.mcneel.com/zoo/home) _; therefore, it needs to be connected to a specific network to work. So when you're at Princeton, it is straightforward to run Rhino because you are most likely connected to the network there. At home, however, this is a little more complicated. For this reason, we need a VPN._
+_Rhino runs on a_ [_zoo server_](https://wiki.mcneel.com/zoo/home) _; therefore, it needs to be connected to a specific network to work. While on the Princeton campus wifi network_ .[Eduroam](https://csguide.cs.princeton.edu/access/wireless#:~:text=For%20Princeton%20users%2C%20your%20login,Tool%20to%20install%20the%20certificate.) this is straightforward to run Rhino. While off the Eduroam network you will need a VPN._
 
 1. Go to the following link and download the appropriate VPN software for your computer: https://vpn.princeton.edu/global-protect/getsoftwarepage.esp
 2. Set the VPN by following the instructions found in this page under the section <ins>Starting and disconnecting from GlobalProtect on your computer</ins>: https://princeton.service-now.com/service?sys_id=KB0012373&id=kb_article 
 3. Now launch Rhino. Once Rhino is running, you can disconnect from the server. But anytime you want to open a new rhino window, you must be connected to the VPN.
 
 
-# UR Documentation
+# ABB Documentation
 **Whenever this documentation references Rhino it is specificly referring to Rhino6**
 # **Part 1: Download Anaconda:**
 
@@ -55,7 +55,7 @@ Mac users: graphical installer<br/>
     1. Install for: Just Me 
     2. Destination Folder: this can be wherever 
     3. Advance options: none 
-    4. Last page you may want to uncheck both boxes unless you want those pages to open in your browser 
+    4. Last page uncheck both boxes unless you want those pages to open in your browser 
 
 # **Part 2: Use Anaconda prompt to download compas &amp; compas\_fab:**
 
@@ -70,9 +70,9 @@ _In this part you will use the command prompt (terminal if on mac) to install co
 
 ```console
 conda config --add channels conda-forge
-conda remove --name arc_311 --all
-conda create -n arc_311 python=3.6 compas=0.15.6 compas_fab=0.11.0 --yes
-conda activate arc_311
+conda remove --name abb_communication --all
+conda create -n abb_communication python=3.6 compas=0.15.6 compas_fab=0.11.0 --yes
+conda activate abb_communication
 python -m compas_rhino.install
 python -m compas_fab.rhino.install -v 6.0
 ```
@@ -136,7 +136,7 @@ _In this part you will download github desktop. You will use this to get some re
     1) to file and select clone repository
     2) In the new window select the URL option
     3) Under repository URL type <br/>
-        First time: [https://github.com/createchaos/ur_online_control_speckle](https://github.com/createchaos/ur_online_control_speckle) <br/> _These files will help you connect to the robots_ <br/>
+        First time: [https://github.com/createchaos/abb_communication](https://github.com/createchaos/abb_communication) <br/> _These files will help you connect to the robots_ <br/>
         Second time: [https://github.com/createchaos/assembly_information_model](https://github.com/createchaos/assembly_information_model) <br/> _These files will help with creating the robot inside rhino_
     4) Make sure that the local path is correct. Depending on which repository you are downloading it should look something like ```C:\Users\name\Documents\GitHub\ur_online_control (or assembly_information_model)``` in Windows and ```\Users\name\Documents\GitHub\assembly_information_model``` in Mac
     5) _(Optional)_ If you created a subfolder change path to ```...\Documents\GitHub\name of your subfolder\ur_online_control (same with assembly_information_model)``` <br/>
