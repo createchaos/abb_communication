@@ -154,7 +154,6 @@ _In part 2 when we downloaded compas and compas\_fab we had to add them to rhino
 
 
 
-
 <h2>Operation</h2>
 
 To connect to robot: <br>
