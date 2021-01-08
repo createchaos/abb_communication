@@ -51,7 +51,7 @@ class ABBCommunication(ClientContainer):
         self.int_zonedata = 10 # zonedata: in mm
         self.int_tool = 0 # toolnumber: 0 = tool0, 1 = vacgrip_vert, 2 = hokuyo
         self.int_wobj = 0 # wobjnumber: 0 = wobj0, 1 = wobj_common, 2 = wobj_base
-        self.int_rob_num = 0
+        # self.int_rob_num = 0
         self.float_arbitrary = 0 #robot number to access
 
         # home positions cartesian - to change!!!!! - stefana
@@ -324,8 +324,7 @@ class ABBCommunication(ClientContainer):
         if int_arr:
             cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + int_arr
         else:
-            # add rob_num to every function
-            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary,self.int_rob_num, 0]
+            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
         self.send(MSG_COMMAND, cmd)
 
     # =================================================================================
@@ -573,7 +572,7 @@ class ABBCommunication(ClientContainer):
 
         self.send(MSG_COMMAND, cmd)
 
-        pose = get_pose(self, input2)
+        pose = = get_pose(self, input2)
 
         if int_arr == None:
             cmd = [CMD_REGRIP_PICK] + pose + ext_axes2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
@@ -825,7 +824,6 @@ class ABBCommunication(ClientContainer):
     # =================================================================================
     def set_rob_num(self,rob_num):
         self.int_rob_num = rob_num
-        print(rob_num)
 
     # =================================================================================
     def set_tool_to_num(self, num_tool):

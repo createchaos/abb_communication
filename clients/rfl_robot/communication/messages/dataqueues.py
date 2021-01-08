@@ -269,7 +269,7 @@ if __name__ == "__main__":
     dQ.append(d, 1, "UR")
     dQ.append(d, 2, "UR")
     #print dQ.get(1, "Rhino")
-    print dQ.queues
+    print( dQ.queues)
     
     test_queue = DataQueue()
     dQ.append(test_queue, "TASK_CMDS_FROM_BASE")
@@ -278,11 +278,11 @@ if __name__ == "__main__":
     test_queue.put([2,2,2,2,2,2,2])
     
     q = dQ.get("TASK_CMDS_FROM_BASE")
-    print q
+    print( q)
     
-    print q.get()
-    print q.get()
-    print q.get()
-    print q.get()
+    print (q.get())
+    print (q.get())
+    print (q.get())
+    print (q.get())
 
     
