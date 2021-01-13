@@ -31,7 +31,7 @@ import time
 import Rhino.Geometry as rg
 import math as m
 
-
+DEFAULT_AXES = [10000,10000,10000]
 
 class ABBCommunication(ClientContainer):
     """ The class ABBComm extends the Clientcontainer class.
@@ -44,7 +44,6 @@ class ABBCommunication(ClientContainer):
 
         " create "
         self.tool_frame = Frame([0, 0, 0], [1, 0, 0], [0, 1, 0])
-
         # init values for command messages
         self.int_speed = 0 # speed: 0 = slow, 1 = mid, 2 = fast
         self.float_duration = 0 #duration is not used, use velocity instead
@@ -73,7 +72,7 @@ class ABBCommunication(ClientContainer):
     # =================================================================================
     # =================================================================================
     def get_pose(self, input):
-        if isinstance(input, rg.plane):
+        if isinstance(input, rg.Plane):
             frame = Frame(input.Origin, input.XAxis, input.YAxis)
             pose = frame.point.data + frame.quaternion.wxyz
         else:
@@ -94,12 +93,14 @@ class ABBCommunication(ClientContainer):
             else:
                 print("too many values for external axes (maximum number = 3)... first 3 values accepted")
                 ext_axes = (ext_axes_in)[:3]
-            print(ext_axes)
         else:
             print("wrong data type for external axes value")
         return ext_axes
-    def get_ext_axes_list(self, ext_axes_in, input):
+
+    def get_ext_axes_list(self, ext_axes_in, inputs):
         nested_list = False
+
+        ext_axes_list = []
 
         checked = False
 
@@ -107,9 +108,9 @@ class ABBCommunication(ClientContainer):
 
         shortList = False
         try:
-            if not ( type(ext_axes_in[0]) == list or type(ext_axes_in[0]) == tuple):
+            if not (type(ext_axes_in[0]) == list or type(ext_axes_in[0]) == tuple):
                 for value in ext_axes_in:
-                    if type(ext_axes_in) == list or type(ext_axes_in) == tuple:
+                    if type(value) == list or type(value) == tuple:
                         print("unexpected nested list... using default axis")
                         unexpect_list = True
                         break
@@ -117,14 +118,14 @@ class ABBCommunication(ClientContainer):
                     if unexpect_list:
                         ext_axes_list.append(DEFAULT_AXES)
                     else:
-                        ext_axes_list.append(get_ext_axes(ext_axes_in))
+                        ext_axes_list.append(self.get_ext_axes(ext_axes_in))
 
             else:
                 for i, input in enumerate(inputs):
                     try:
                         if type(ext_axes_in[i]) == list or type(ext_axes_in[i]) == tuple:
                             nested_list = True
-                            ext_axes_list.append(get_ext_axes(ext_axes_in[i]))
+                            ext_axes_list.append(self.get_ext_axes(ext_axes_in[i]))
                         else:
                             if nested_list and not checked:
                                 print("data type varies after " + str(i) + "... default ext_axes applied after index.")
@@ -133,7 +134,7 @@ class ABBCommunication(ClientContainer):
                             elif nested_list:
                                 ext_axes_list.append(DEFAULT_AXES)
                             else:
-                                ext_axes_list.append(get_ext_axes(ext_axes_in))
+                                ext_axes_list.append(self.get_ext_axes(ext_axes_in))
                     except:
                         if not shortList:
                             shortList = True
@@ -242,7 +243,7 @@ class ABBCommunication(ClientContainer):
         return cmd
 
     # =================================================================================
-    def send_pose_cartesian(self, input, ext_axes_in = [100000, 100000, 100000], int_arr=None):
+    def send_pose_cartesian(self, input, ext_axes_in = DEFAULT_AXES, int_arr=None):
         """ create command from plane or frame and send task target to robot,
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj]
@@ -262,7 +263,7 @@ class ABBCommunication(ClientContainer):
         return cmd
 
     # =================================================================================
-    def send_pose_cartesian_joints(self, input, ext_axes_in = [100000, 100000, 100000], int_arr=None):
+    def send_pose_cartesian_joints(self, input, ext_axes_in = DEFAULT_AXES, int_arr=None):
         """ create command from plane or frame and send task target to robot,
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj]
@@ -281,7 +282,7 @@ class ABBCommunication(ClientContainer):
         return cmd
 
     # =================================================================================
-    def send_pose_quat(self, pose, ext_axes_in=[100000, 100000, 100000], int_arr=None):
+    def send_pose_quat(self, pose, ext_axes_in= DEFAULT_AXES, int_arr=None):
         """ create command from pose quaternions and send task target to robot,
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj]
@@ -300,15 +301,15 @@ class ABBCommunication(ClientContainer):
         return cmd
 
     # =================================================================================
-    def send_pose_cartesian_list(self, inputs, ext_axes_in=None, int_arr=None):
+    def send_pose_cartesian_list(self, inputs, ext_axes_in=DEFAULT_AXES, int_arr=None):
         """ create command from planes or frames and send task targets to robot,
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary] """
 
         #####################################add case with single value list ####################################################
 
-        ext_axes_list = self.get_ext_axes_list(ext_axes_in,input)
-
+        ext_axes_list = self.get_ext_axes_list(ext_axes_in,inputs)
+        print (ext_axes_list)
         for i, input in enumerate(inputs):
             self.send_pose_cartesian(input, ext_axes_list[i], int_arr)
 
