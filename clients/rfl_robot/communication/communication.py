@@ -80,6 +80,70 @@ class ABBCommunication(ClientContainer):
             pose = input.point.data + input.quaternion.wxyz
         return pose
     # =================================================================================
+    # sets external axis
+    # =================================================================================
+    # =================================================================================
+    def get_ext_axes(self, ext_axes_in):
+        if type(ext_axes_in) == list or type(ext_axes_in) == tuple:
+            if len(ext_axes_in) == 1:
+                ext_axes = [ext_axes_in[0], 0, 0]
+            elif len(ext_axes_in) == 2:
+                ext_axes = [ext_axes_in[0], ext_axes_in[1], 0]
+            elif len(ext_axes_in) == 3:
+                ext_axes = ext_axes_in
+            else:
+                print("too many values for external axes (maximum number = 3)... first 3 values accepted")
+                ext_axes = (ext_axes_in)[:3]
+            print(ext_axes)
+        else:
+            print("wrong data type for external axes value")
+        return ext_axes
+    def get_ext_axes_list(self, ext_axes_in, input):
+        nested_list = False
+
+        checked = False
+
+        unexpect_list = False
+
+        shortList = False
+        try:
+            if not ( type(ext_axes_in[0]) == list or type(ext_axes_in[0]) == tuple):
+                for value in ext_axes_in:
+                    if type(ext_axes_in) == list or type(ext_axes_in) == tuple:
+                        print("unexpected nested list... using default axis")
+                        unexpect_list = True
+                        break
+                for i, input in enumerate(inputs):
+                    if unexpect_list:
+                        ext_axes_list.append(DEFAULT_AXES)
+                    else:
+                        ext_axes_list.append(get_ext_axes(ext_axes_in))
+
+            else:
+                for i, input in enumerate(inputs):
+                    try:
+                        if type(ext_axes_in[i]) == list or type(ext_axes_in[i]) == tuple:
+                            nested_list = True
+                            ext_axes_list.append(get_ext_axes(ext_axes_in[i]))
+                        else:
+                            if nested_list and not checked:
+                                print("data type varies after " + str(i) + "... default ext_axes applied after index.")
+                                checked = True
+                                ext_axes_list.append(DEFAULT_AXES)
+                            elif nested_list:
+                                ext_axes_list.append(DEFAULT_AXES)
+                            else:
+                                ext_axes_list.append(get_ext_axes(ext_axes_in))
+                    except:
+                        if not shortList:
+                            shortList = True
+                            print("List too short... after " + str(i) + "... default ext_axes applied after index.")
+                        ext_axes_list.append(DEFAULT_AXES)
+            return ext_axes_list
+        except:
+            print("wrong data type for external axes value - list required")
+
+    # =================================================================================
     # robot tool
     # =================================================================================
     # =================================================================================
@@ -165,7 +229,7 @@ class ABBCommunication(ClientContainer):
             else:
                 print( "length of input not correct")
         else:
-            pose = get_pose(self, input)
+            pose = self.get_pose(input)
             pose_axes = pose + ext_axes
             self.debug_print = pose_axes
 
@@ -184,18 +248,10 @@ class ABBCommunication(ClientContainer):
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj]
         ext_axes values are optional, either in list format or as single float value for only one axis"""
 
-        pose = get_pose(self, input)
+        pose = self.get_pose(input)
 
+        ext_axes = self.get_ext_axes(ext_axes_in)
 
-        if type(ext_axes_in)==list or type(ext_axes_in)==tuple:
-            if len(ext_axes_in)==1:
-                ext_axes = [ext_axes_in[0], 0, 0]
-            elif len(ext_axes_in)==2:
-                ext_axes = [ext_axes_in[0], ext_axes_in[1], 0]
-            else:
-                ext_axes = ext_axes_in
-        else:
-            print ("wrong data type for external axes value")
 
         if int_arr == None:
             cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
@@ -212,17 +268,9 @@ class ABBCommunication(ClientContainer):
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj]
         ext_axes values are optional, either in list format or as single float value for only one axis"""
 
-        pose = get_pose(self, input)
+        pose = self.get_pose(input)
 
-        if type(ext_axes_in) == list or type(ext_axes_in) == tuple:
-            if len(ext_axes_in) == 1:
-                ext_axes = [ext_axes_in[0], 0, 0]
-            elif len(ext_axes_in) == 2:
-                ext_axes = [ext_axes_in[0], ext_axes_in[1], 0]
-            else:
-                ext_axes = ext_axes_in
-        else:
-            print("wrong data type for external axes value")
+        ext_axes = elf.get_ext_axes(ext_axes_in)
 
         if int_arr == None:
             cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
@@ -239,15 +287,9 @@ class ABBCommunication(ClientContainer):
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj]
         ext_axes values are optional, either in list format or as single float value for only one axis"""
 
-        if type(ext_axes_in) == list or type(ext_axes_in) == tuple:
-            if len(ext_axes_in) == 1:
-                ext_axes = [ext_axes_in[0], 0, 0]
-            elif len(ext_axes_in) == 2:
-                ext_axes = [ext_axes_in[0], ext_axes_in[1], 0]
-            else:
-                ext_axes = ext_axes_in
-        else:
-            print ("wrong data type for external axes value")
+        pose = self.get_pose(input)
+
+        ext_axes = elf.get_ext_axes(ext_axes_in)
 
         if int_arr == None:
             cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
@@ -265,35 +307,7 @@ class ABBCommunication(ClientContainer):
 
         #####################################add case with single value list ####################################################
 
-        ext_axes_list = []
-        if ext_axes_in == None:
-            for i, input in enumerate(inputs):
-                ext_axes_list.append([100000, 100000, 100000])
-        elif type(ext_axes_in) == list or type(ext_axes_in) == tuple:
-            if type(ext_axes_in[0]) == list or type(ext_axes_in[0]) == tuple:
-                for i, inputs in enumerate(inputs):
-                    if len(ext_axes_in[i])==1:
-                        ext_axes_list.append([ext_axes_in[i][0], 100000, 100000])
-                    elif len(ext_axes_in[i])==2:
-                        ext_axes_list.append([ext_axes_in[i][0], ext_axes_in[i][1], 100000])
-                    elif len(ext_axes_in[i])==3:
-                        ext_axes_list.append([ext_axes_in[i][0], ext_axes_in[i][1], ext_axes_in[i][2]])
-                    else:
-                        print( "too many values for external axes (maximum number = 3)")
-            else:
-                for i, input in enumerate(inputs):
-                    if len(ext_axes_in) == 1:
-                        ext_axes_list.append([ext_axes_in[0], 100000, 100000])
-                    elif len(ext_axes_in) == 2:
-                        ext_axes_list.append(
-                            [ext_axes_in[0], ext_axes_in[1], 100000])
-                    elif len(ext_axes_in) == 3:
-                        ext_axes_list.append(
-                            [ext_axes_in[0], ext_axes_in[1], ext_axes_in[2]])
-                    else:
-                        print("too many values for external axes (maximum number = 3)")
-        else:
-            print("wrong data type for external axes value - list required")
+        ext_axes_list = self.get_ext_axes_list(ext_axes_in,input)
 
         for i, input in enumerate(inputs):
             self.send_pose_cartesian(input, ext_axes_list[i], int_arr)
@@ -385,7 +399,7 @@ class ABBCommunication(ClientContainer):
         (== >> this routine is defined in RobotStudio, the command consist only out of the pick-up plane.
         """
 
-        pose = get_pose(self, input)
+        pose = self.get_pose(input)
 
         if int_arr == None:
             cmd = [CMD_PICK_BRICK_FROM_POSE] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
@@ -427,7 +441,7 @@ class ABBCommunication(ClientContainer):
         if send_pick_brick_from_feed:
             self.send_pick_brick_from_feed(fullbrick, int_arr)
 
-        pose = get_pose(self, input)
+        pose = self.get_pose(input)
 
 
         if int_arr == None:
@@ -470,7 +484,7 @@ class ABBCommunication(ClientContainer):
 
         cmd = [CMD_PICK_ROD, robtarget, int_speed, float_duration, int_zonedata, int_tool, float_arbitrary]"""
 
-        pose = get_pose(self, input)
+        pose = self.get_pose(input)
 
 
 
@@ -709,7 +723,7 @@ class ABBCommunication(ClientContainer):
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj] """
 
-        pose = get_pose(self, input)
+        pose = self.get_pose(input)
         if int_arr == None:
             cmd = [CMD_STU_PICK] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
         else:
@@ -746,7 +760,7 @@ class ABBCommunication(ClientContainer):
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj] """
 
-        pose = get_pose(self, input)
+        pose = self.get_pose(input)
 
         if int_arr == None:
             cmd = [CMD_MAS_PICK] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
@@ -760,7 +774,7 @@ class ABBCommunication(ClientContainer):
         """ create command from plane or frame and send place command to robot,
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj] """
-        pose = get_pose(self, input)
+        pose = self.get_pose(input)
 
         if int_arr == None:
             cmd = [CMD_MAS_PLACE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
@@ -776,7 +790,7 @@ class ABBCommunication(ClientContainer):
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj] """
 
-        pose = get_pose(self, input)
+        pose = self.get_pose(input)
 
 
         if int_arr == None:
@@ -792,7 +806,7 @@ class ABBCommunication(ClientContainer):
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj] """
 
-        pose = get_pose(self, input)
+        pose = self.get_pose(input)
         if int_arr == None:
             cmd = [CMD_MAS_PLACE_MAGAZINE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
         else:
