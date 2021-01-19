@@ -118,8 +118,8 @@ _In this part you will download github desktop. You will use this to get some re
     3) Under repository URL type <br/>
         First time: [https://github.com/createchaos/abb_communication](https://github.com/createchaos/abb_communication) <br/> _These files will help you connect to the robots_ <br/>
         Second time: [https://github.com/createchaos/assembly_information_model](https://github.com/createchaos/assembly_information_model) <br/> _These files will help with creating the robot inside rhino_
-    4) Make sure that the local path is correct. Depending on which repository you are downloading it should look something like ```C:\Users\name\Documents\GitHub\ur_online_control (or assembly_information_model)``` in Windows and ```\Users\name\Documents\GitHub\assembly_information_model``` in Mac
-    5) _(Optional)_ If you created a subfolder change path to ```...\Documents\GitHub\name of your subfolder\ur_online_control (same with assembly_information_model)``` <br/>
+    4) Make sure that the local path is correct. Depending on which repository you are downloading it should look something like ```C:\Users\name\Documents\GitHub\abb_communication (or assembly_information_model)``` in Windows and ```\Users\name\Documents\GitHub\assembly_information_model``` in Mac
+    5) _(Optional)_ If you created a subfolder change path to ```...\Documents\GitHub\name of your subfolder\abb_communication (same with assembly_information_model)``` <br/>
     <img src="screenGIFs/git clone.gif" width="60%"> <br/>
 
 
@@ -144,7 +144,7 @@ _In part 2 when we downloaded compas and compas\_fab we had to add them to rhino
     1) To do so hit add to search path (circled in red in photo) <br/> <img src="screenshots/fileSearch.png" width="40%"> <br/>
     2) Navigate through your folders to find one of the two repositories.
     3) Click on the repositories folder. Find and select the src folder and hit okay
-    4) This should look like \Users\name\Documents\GitHub\ur_online_control\src or \Users\name\Documents\GitHub\assembly_information_mode\src
+    4) This should look like \Users\name\Documents\GitHub\abb_communication\src or \Users\name\Documents\GitHub\assembly_information_mode\src
     5) Then using the up arrow bring that path to the top of the list
     6) Repeat with the second repository <br/>
     <img src="screenGIFs/adding file to rhino.gif" width="60%"> <br/>
