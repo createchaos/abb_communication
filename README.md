@@ -2,7 +2,7 @@
 
 <h2>Installation</h2>
 
-_Below is the Documentation needed for setting up communication the ABB robots at the ECL._
+_Below is the Documentation needed for setting up communication with the ABB robots at the ECL._
 
 <h3> Rhino6 Documentation: Downloading </h3>
 
