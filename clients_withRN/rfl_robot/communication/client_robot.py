@@ -72,18 +72,18 @@ class ClientRobot(ClientGeneric): #former: inherited from Thread
     #===========================================================================
     def _send_command(self, cmd):
         """ msg_type = MSG_COMMAND
-        [msg_type, msg_counter, timestamp_sec, timestep_nanosec, cmd_type, float1-float10, int_vel, float_duration, int_zone, int_tool, float_arbitrary, int_wobj]
+        [msg_type, msg_counter, timestamp_sec, timestep_nanosec, cmd_type, float1-float10, int_vel, float_duration, int_zone, int_tool, float_arbitrary, int_rob_num, int_wobj]
         """
         LOG.debug("_send_command: cmd=%s", cmd)
         msg_snd_len = struct.calcsize(str(len(cmd)) + "f") + 12
         params = [msg_snd_len, MSG_COMMAND] + self.get_header() + cmd
         LOG.debug("_send_command: params=%s", params)
-        buf = struct.pack(self.byteorder + "2Q" + "3I" + "i" + "10f" + "if2ifi", *params)
+        buf = struct.pack(self.byteorder + "2Q" + "3I" + "i" + "10f" + "if2if2i", *params)
         self.socket.send(buf)
 
     #===========================================================================
     def process(self, msg_len, msg_type, raw_msg):
-        """ The transmission protocol for messages is
+        """ The transmission protocol for messages is 
         [length msg in bytes] [msg identifier] [other bytes which will be read out according to msg identifier] """
         try:
             self.parent.lock.acquire()

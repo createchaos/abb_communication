@@ -255,7 +255,7 @@ class ABBCommunication(ClientContainer):
 
 
         if int_arr == None:
-            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_rob_num, self.int_wobj]
         else:
             cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + int_arr
 
@@ -340,7 +340,7 @@ class ABBCommunication(ClientContainer):
             cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + int_arr
         else:
             # add rob_num to every function
-            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
+            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary,self.int_rob_num, 0]
         self.send(MSG_COMMAND, cmd)
 
     # =================================================================================
