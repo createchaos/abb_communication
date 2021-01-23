@@ -340,7 +340,7 @@ class ABBCommunication(ClientContainer):
             cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + int_arr
         else:
             # add rob_num to every function
-            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
+            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_rob_num, 0]
         self.send(MSG_COMMAND, cmd)
 
     # =================================================================================
