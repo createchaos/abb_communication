@@ -213,7 +213,7 @@ class ABBCommunication(ClientContainer):
         """ send stop to robot """
         pose = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_RAPID_STOP] + pose + [0, 0, 0, 0, self.float_arbitrary, 0]
+            cmd = [CMD_RAPID_STOP] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_RAPID_STOP] + pose + int_arr
         self.send(MSG_COMMAND, cmd)
@@ -235,7 +235,7 @@ class ABBCommunication(ClientContainer):
             self.debug_print = pose_axes
 
         if int_arr == None:
-            cmd = [num_cmd] + pose_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [num_cmd] + pose_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [num_cmd] + pose_axes + int_arr
 
@@ -274,7 +274,7 @@ class ABBCommunication(ClientContainer):
         ext_axes = self.get_ext_axes(ext_axes_in)
 
         if int_arr == None:
-            cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + int_arr
 
@@ -293,7 +293,7 @@ class ABBCommunication(ClientContainer):
         ext_axes = self.get_ext_axes(ext_axes_in)
 
         if int_arr == None:
-            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + int_arr
 
@@ -329,7 +329,7 @@ class ABBCommunication(ClientContainer):
         if int_arr:
             cmd = [CMD_GO_TO_JOINTTARGET_REL] + axes + [0] + int_arr
         else:
-            cmd = [CMD_GO_TO_JOINTTARGET_REL] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_GO_TO_JOINTTARGET_REL] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
 
         self.send(MSG_COMMAND, cmd)
         return cmd
@@ -351,7 +351,7 @@ class ABBCommunication(ClientContainer):
             if int_arr:
                 cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + int_arr
             else:
-                cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
+                cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
 
     # =================================================================================
@@ -359,7 +359,7 @@ class ABBCommunication(ClientContainer):
         " send command for opening gripper through DO"
         pose = [offset_axis_X, offset_axis_Y, offset_axis_Z, 0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_SENDMOVELRELTOOL] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
+            cmd = [CMD_SENDMOVELRELTOOL] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_SENDMOVELRELTOOL] + pose + int_arr
         self.send(MSG_COMMAND, cmd)
@@ -370,7 +370,7 @@ class ABBCommunication(ClientContainer):
         Send the same procedure to both robots at the same time, and they will sync their movements.
         Important: send the same X ganrty value!"""
         if int_arr == None:
-            cmd = [CMD_COORDINATED_GANTRY_MOVE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
+            cmd = [CMD_COORDINATED_GANTRY_MOVE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_COORDINATED_GANTRY_MOVE] + pose + ext_axes + int_arr
 
@@ -403,7 +403,7 @@ class ABBCommunication(ClientContainer):
         pose = self.get_pose(input)
 
         if int_arr == None:
-            cmd = [CMD_PICK_BRICK_FROM_POSE] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_PICK_BRICK_FROM_POSE] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_PICK_BRICK_FROM_POSE] + pose + int_arr
         self.send(MSG_COMMAND, cmd)
@@ -421,7 +421,7 @@ class ABBCommunication(ClientContainer):
         float_arbitrary = 0 if fullbrick == True else 1 #this parameter has to read in Rapid, to either pick a fullbrick or a halfbrick
 
         if int_arr == None:
-            cmd = [CMD_PICK_BRICK] + jointpose + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, float_arbitrary, self.int_wobj]
+            cmd = [CMD_PICK_BRICK] + jointpose + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_PICK_BRICK] + jointpose + [0] + int_arr
 
@@ -446,7 +446,7 @@ class ABBCommunication(ClientContainer):
 
 
         if int_arr == None:
-            cmd = [CMD_PLACE_BRICK] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_PLACE_BRICK] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_PLACE_BRICK] + pose + int_arr
 
@@ -490,7 +490,7 @@ class ABBCommunication(ClientContainer):
 
 
         if int_arr == None:
-            cmd = [CMD_PICK_ROD] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_PICK_ROD] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_PICK_ROD] + pose + ext_axes + int_arr
 
@@ -507,7 +507,7 @@ class ABBCommunication(ClientContainer):
         pose_1 = get_pose(self, input1)
 
         if int_arr == None:
-            cmd = [CMD_MILL_ROD_START] + pose_1 + ext_axes1 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_MILL_ROD_START] + pose_1 + ext_axes1 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_MILL_ROD_START] + pose_1 + ext_axes1 + int_arr
 
@@ -516,7 +516,7 @@ class ABBCommunication(ClientContainer):
         pose_2 = get_pose(self, input2)
 
         if int_arr == None:
-            cmd = [CMD_MILL_ROD_END] + pose_2 + ext_axes2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_MILL_ROD_END] + pose_2 + ext_axes2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_MILL_ROD_END] + pose_2 + ext_axes2 + int_arr
 
@@ -551,7 +551,7 @@ class ABBCommunication(ClientContainer):
         pose_1 = get_pose(self, plane_local_1)
 
         if int_arr == None:
-            cmd = [CMD_MILL_ROD_START] + pose_1 + ext_axes1 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_MILL_ROD_START] + pose_1 + ext_axes1 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_MILL_ROD_START] + pose_1 + ext_axes1 + int_arr
 
@@ -563,7 +563,7 @@ class ABBCommunication(ClientContainer):
         pose_2 = get_pose(self, plane_local_2)
 
         if int_arr == None:
-            cmd = [CMD_MILL_ROD_END] + pose_2 + ext_axes2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_MILL_ROD_END] + pose_2 + ext_axes2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_MILL_ROD_END] + pose_2 + ext_axes2 + int_arr
 
@@ -582,7 +582,7 @@ class ABBCommunication(ClientContainer):
         pose = get_pose(self, input1)
 
         if int_arr == None:
-            cmd = [CMD_REGRIP_PLACE] + pose + ext_axes1 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_REGRIP_PLACE] + pose + ext_axes1 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_REGRIP_PLACE] + pose + ext_axes1 + int_arr
 
@@ -591,7 +591,7 @@ class ABBCommunication(ClientContainer):
         pose = get_pose(self, input2)
 
         if int_arr == None:
-            cmd = [CMD_REGRIP_PICK] + pose + ext_axes2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_REGRIP_PICK] + pose + ext_axes2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_REGRIP_PICK] + pose + ext_axes2 + int_arr
 
@@ -610,7 +610,7 @@ class ABBCommunication(ClientContainer):
 
 
         if int_arr == None:
-            cmd = [CMD_SAFE_POS] + joint_vals + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
+            cmd = [CMD_SAFE_POS] + joint_vals + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_SAFE_POS] + joint_vals + [0] + int_arr
 
@@ -657,7 +657,7 @@ class ABBCommunication(ClientContainer):
         " send command for calling the dynamic pickup procedure"
         pose = [floor_distance, pipe_length, 0,0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_LWS_DYNAMIC_PICKUP] + pose + [0, 0, 0, 0, self.float_arbitrary, 0]
+            cmd = [CMD_LWS_DYNAMIC_PICKUP] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_LWS_DYNAMIC_PICKUP] + pose + int_arr
         self.send(MSG_COMMAND, cmd)
@@ -671,7 +671,7 @@ class ABBCommunication(ClientContainer):
         """
         pose = [signal_do, pulse_length, high, 0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_PULSEDO] + pose + [0, 0, 0, 0, self.float_arbitrary, 0]
+            cmd = [CMD_PULSEDO] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_PULSEDO] + pose + int_arr
         self.send(MSG_COMMAND, cmd)
@@ -691,7 +691,7 @@ class ABBCommunication(ClientContainer):
         " send command for opening clamp through DO"
         pose = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_OPEN_CLAMP] + pose + [0, 0, 0, 0, self.float_arbitrary, 0]
+            cmd = [CMD_OPEN_CLAMP] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_OPEN_CLAMP] + pose + int_arr
 
@@ -701,7 +701,7 @@ class ABBCommunication(ClientContainer):
         " send command for opening clamp through DO"
         speed = [speed1,speed2,0,0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_SET_SPEED_INPUT] + speed + [0, 0, 0, 0, self.float_arbitrary, 0]
+            cmd = [CMD_SET_SPEED_INPUT] + speed + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_SET_SPEED_INPUT] + speed + int_arr
 
@@ -726,7 +726,7 @@ class ABBCommunication(ClientContainer):
 
         pose = self.get_pose(input)
         if int_arr == None:
-            cmd = [CMD_STU_PICK] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_STU_PICK] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_STU_PICK] + pose + ext_axes + int_arr
 
@@ -740,7 +740,7 @@ class ABBCommunication(ClientContainer):
 
         pose_1 = get_pose(self, input1)
         if int_arr == None:
-            cmd = [CMD_STU_PLACE_1] + pose_1 + ext_axes_1 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_STU_PLACE_1] + pose_1 + ext_axes_1 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_STU_PLACE_1] + pose_1 + ext_axes_1 + int_arr
 
@@ -748,7 +748,7 @@ class ABBCommunication(ClientContainer):
 
         pose_2 = get_pose(self, input2)
         if int_arr == None:
-            cmd = [CMD_STU_PLACE_2] + pose_2 + ext_axes_2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_STU_PLACE_2] + pose_2 + ext_axes_2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_STU_PLACE_2] + pose_2 + ext_axes_2 + int_arr
 
@@ -764,7 +764,7 @@ class ABBCommunication(ClientContainer):
         pose = self.get_pose(input)
 
         if int_arr == None:
-            cmd = [CMD_MAS_PICK] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_MAS_PICK] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_MAS_PICK] + pose + ext_axes + int_arr
 
@@ -778,7 +778,7 @@ class ABBCommunication(ClientContainer):
         pose = self.get_pose(input)
 
         if int_arr == None:
-            cmd = [CMD_MAS_PLACE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_MAS_PLACE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_MAS_PLACE] + pose + ext_axes + int_arr
 
@@ -795,7 +795,7 @@ class ABBCommunication(ClientContainer):
 
 
         if int_arr == None:
-            cmd = [CMD_MAS_PICK_MAGAZINE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_MAS_PICK_MAGAZINE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_MAS_PICK_MAGAZINE] + pose + ext_axes + int_arr
 
@@ -809,7 +809,7 @@ class ABBCommunication(ClientContainer):
 
         pose = self.get_pose(input)
         if int_arr == None:
-            cmd = [CMD_MAS_PLACE_MAGAZINE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_MAS_PLACE_MAGAZINE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_MAS_PLACE_MAGAZINE] + pose + ext_axes + int_arr
 
