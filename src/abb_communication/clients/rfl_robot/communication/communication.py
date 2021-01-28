@@ -356,7 +356,7 @@ class ABBCommunication(ClientContainer):
             self.send(MSG_COMMAND, cmd)
 
     # =================================================================================
-    def send_movel_relrool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None):
+    def send_movel_reltool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None):
         " send command for opening gripper through DO"
         pose = [offset_axis_X, offset_axis_Y, offset_axis_Z, 0,0,0,0,0,0,0]
         if int_arr == None:
