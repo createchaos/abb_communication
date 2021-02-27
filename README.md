@@ -1,8 +1,8 @@
-#ABB Communication
+## ABB Communication
 
 The ABB communication library is a collection of [python](https://www.python.org/doc/essays/blurb/) functions that makes communication between the ABB robot controller and your computer possible. While ABB provides its own software (RobotStudio) that allows you connect to the robot controller, change settings, send instructions, and also receive feedback, a python-based means of communication is much a easier to learn and implement in design projects, especially because we can execute python code directly from Rhino and Grasshopper.
 
-##Installation
+## Installation
 
 To get started, you will need to install some software:
 
@@ -12,7 +12,7 @@ To get started, you will need to install some software:
 - **CompasFab**: a python library that extends Compas to include more functionality specific to robotic fabrication. 
 - **ABB communication library**: A python library that enables communication between the robots and your computer without relying upon ABB's proprietary *RobotStudio* application. 
 
-###1. Rhino
+### 1. Rhino
 _This documentation has been developed using Rhino 6. Older or newer versions of Rhino may work but have not yet been tested._
 
 To install Rhino, follow the instructions on the Princeton SoA website:
@@ -29,7 +29,7 @@ To setup a VPN:
 3. Now launch Rhino. Once Rhino is running, you can disconnect from the server. However, you must be connected to the VPN if you want to open a new Rhino window.
 
 
-###2. Anaconda
+### 2. Anaconda
 
 1. Download Anaconda [here](https://www.anaconda.com/products/individual).
 	- **Windows**: choose the version that matches your operating system. If unsure which version of Windows  you have, go to *Start button > Settings > System > About* <br>
@@ -41,7 +41,7 @@ To setup a VPN:
     3. Advance options: none 
     4. Last page: uncheck both boxes unless you want those pages to open in your browser.
 
-###3. Compas and CompasFab
+### 3. Compas and CompasFab
 
 One of the python-related tools that Anaconda installs is the Anaconda prompt. This is a special command line that allows you to perform certain actions such as creating a code environments and downloading/installing code libraries. If you want to read more about why developers use the command line, check out [this article](https://www.digitalcitizen.life/what-is-cmd).
 
@@ -107,7 +107,7 @@ We will use *your\_env\_name* as a placeholder for the name of the conda environ
 
 If you don't see any errors, Compas and CompasFab are working. You should do the same test in a Grasshopper python component to see if they have been properly connected to Rhino. If they are importable in the Anaconda Prompt but not in Rhino, it's possible you need to revisit step 6.  
     
-###4. ABB communication 
+### 4. ABB communication 
 
 While Compas and CompasFab are available to download and install using only conda commands, the ABB communication library must be cloned from GitHub and then installed in a similar way. 
 
@@ -121,11 +121,11 @@ python -m compas_rhino.install -p abb_communication
 ```
 Tip: don't forget the dot at the end of the `pip install -e .` command! 
   
-####5. ROS-powered visualization
+#### 5. ROS-powered visualization
 
 See the [CompasFab documentation](https://gramaziokohler.github.io/compas_fab/latest/backends/ros.html) regarding using ROS backends. You will need to install Docker. You will also need a Docker *compose.yaml* file to match the robot setup you would like to visualize. These are found in the /docker directory of this repository. 
 
-##Operation
+## Operation
 
 To connect to a robot:
 
