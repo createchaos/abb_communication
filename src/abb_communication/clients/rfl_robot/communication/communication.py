@@ -357,13 +357,15 @@ class ABBCommunication(ClientContainer):
 
     # =================================================================================
     def send_movel_reltool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None):
-        " send command for opening gripper through DO"
+        " send command for moving relative to the tool"
         pose = [offset_axis_X, offset_axis_Y, offset_axis_Z, 0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_SENDMOVELRELTOOL] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
+            cmd = [CMD_SENDMOVELRELTOOL] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_SENDMOVELRELTOOL] + pose + int_arr
         self.send(MSG_COMMAND, cmd)
+        print("HIIII")
+        return cmd
 
     # =================================================================================
     def send_coordinated_gantry_move(self, pose, ext_axes, int_arr=None):
