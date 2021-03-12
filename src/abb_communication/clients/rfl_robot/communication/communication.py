@@ -174,7 +174,7 @@ class ABBCommunication(ClientContainer):
     def get_current_pose_cartesian(self):
         """ get the current tool pose from the queue and set the tool_frame according to the pose """
         msg_current_pose_cart = self.get_from_rcv_queue(MSG_CURRENT_POSE_CARTESIAN)
-        if msg_current_pose_cart <> None:
+        if msg_current_pose_cart != None:
             pose = msg_current_pose_cart[1]
             self.current_tool0_pose = pose
             #self.tool_frame.set_to_pose(pose)
@@ -186,7 +186,7 @@ class ABBCommunication(ClientContainer):
     def get_current_pose_cartesian_base(self):
         """ get the current tool pose from the queue in robot base coordinate system and set the tool_frame according to the pose """
         msg_current_pose_cart_base = self.get_from_rcv_queue(MSG_CURRENT_POSE_CARTESIAN_BASE)
-        if msg_current_pose_cart_base <> None:
+        if msg_current_pose_cart_base != None:
             pose = msg_current_pose_cart_base[1]
             self.current_tool0_pose = pose
             #self.tool_frame.set_to_pose(pose)
@@ -198,7 +198,7 @@ class ABBCommunication(ClientContainer):
     def get_current_pose_joint(self):
         """ get the current tool pose from the queue and set the tool_frame according to the pose """
         msg_current_pose_joint = self.get_from_rcv_queue(MSG_CURRENT_POSE_JOINT)
-        if msg_current_pose_joint <> None:
+        if msg_current_pose_joint != None:
             pose_joint = msg_current_pose_joint[1]
             self.current_joint_values = [m.degrees(pj) for pj in pose_joint]
             return pose_joint
