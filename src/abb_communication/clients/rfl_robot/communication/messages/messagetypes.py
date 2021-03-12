@@ -78,6 +78,7 @@ CMD_LWS_DYNAMIC_PICKUP = 27
 CMD_RAPID_STOP = 28
 CMD_PULSEDO = 29
 CMD_SENDMOVELRELTOOL = 31
+CMD_SENDMOVELRELTCP = 32
 CMD_COORDINATED_GANTRY_MOVE = 33
 
 CMD_SET_SPEED_INPUT = 50
@@ -91,7 +92,7 @@ arm_cmd_types_str_array = ["CMD_IDLE_MODE", "CMD_GO_TO_JOINTTARGET_ABS", "CMD_GO
                            "CMD_GO_TO_TASKTARGET_JOINTS", "CMD_STU_PICK", "CMD_STU_PLACE_1", "CMD_STU_PLACE_2", \
                            "CMD_MAS_PICK", "CMD_MAS_PLACE", "CMD_MAS_PICK_MAGAZINE", "CMD_MAS_PLACE_MAGAZINE", \
                            "CMD_LWS_DYNAMIC_PICKUP", "CMD_RAPID_STOP", "CMD_PULSEDO", "CMD_SENDMOVELRELTOOL", \
-                           "CMD_COORDINATED_GANTRY_MOVE" ]
+                           "CMD_SENDMOVELRELTCP", "CMD_COORDINATED_GANTRY_MOVE" ]
 
 #===============================================================================
 # MESSAGE TYPES BASE

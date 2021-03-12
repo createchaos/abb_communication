@@ -356,15 +356,25 @@ class ABBCommunication(ClientContainer):
             self.send(MSG_COMMAND, cmd)
 
     # =================================================================================
-    def send_movel_reltool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None):
+    def send_movel_reltool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None, tcp = False):
         " send command for moving relative to the tool"
         pose = [offset_axis_X, offset_axis_Y, offset_axis_Z, 0,0,0,0,0,0,0]
-        if int_arr == None:
-            cmd = [CMD_SENDMOVELRELTOOL] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
+
+        # By default, this function will send a command to move relative to the current tool.
+        # Here we provide a way to move relative to the TCP, which can be helpful if your tool
+        # is oriented differently from the TCP.
+
+        rel_cmd = ""
+        if tcp:
+            rel_cmd = [CMD_SENDMOVELRELTCP]
         else:
-            cmd = [CMD_SENDMOVELRELTOOL] + pose + int_arr
+            rel_cmd = [CMD_SENDMOVELRELTOOL]
+
+        if int_arr == None:
+            cmd = rel_cmd + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
+        else:
+            cmd = rel_cmd + pose + int_arr
         self.send(MSG_COMMAND, cmd)
-        print("HIIII")
         return cmd
 
     # =================================================================================
@@ -372,6 +382,7 @@ class ABBCommunication(ClientContainer):
         """coordinated movement of two robots on a gantry.
         Send the same procedure to both robots at the same time, and they will sync their movements.
         Important: send the same X ganrty value!"""
+
         if int_arr == None:
             cmd = [CMD_COORDINATED_GANTRY_MOVE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
         else:
