@@ -25,7 +25,7 @@ from messages.messagetypes import CMD_PICK_ROD, CMD_MILL_ROD_END, CMD_MILL_ROD_S
 from messages.messagetypes import CMD_GO_TO_TASKTARGET, CMD_GO_TO_TASKTARGET_JOINTS, CMD_GO_TO_JOINTTARGET_ABS, CMD_GO_TO_JOINTTARGET_REL, CMD_PICK_BRICK, CMD_PLACE_BRICK, CMD_PICK_BRICK_FROM_POSE
 from messages.messagetypes import CMD_STU_PICK, CMD_STU_PLACE_1, CMD_STU_PLACE_2
 from messages.messagetypes import CMD_MAS_PICK, CMD_MAS_PLACE, CMD_MAS_PICK_MAGAZINE, CMD_MAS_PLACE_MAGAZINE, CMD_LWS_DYNAMIC_PICKUP, CMD_RAPID_STOP, CMD_PULSEDO
-from messages.messagetypes import CMD_SENDMOVELRELTOOL, CMD_COORDINATED_GANTRY_MOVE, CMD_SET_SPEED_INPUT
+from messages.messagetypes import CMD_SENDMOVELRELTOOL, CMD_SENDMOVELRELTCP, CMD_COORDINATED_GANTRY_MOVE, CMD_SET_SPEED_INPUT
 
 import time
 import Rhino.Geometry as rg
@@ -174,7 +174,7 @@ class ABBCommunication(ClientContainer):
     def get_current_pose_cartesian(self):
         """ get the current tool pose from the queue and set the tool_frame according to the pose """
         msg_current_pose_cart = self.get_from_rcv_queue(MSG_CURRENT_POSE_CARTESIAN)
-        if msg_current_pose_cart <> None:
+        if msg_current_pose_cart != None:
             pose = msg_current_pose_cart[1]
             self.current_tool0_pose = pose
             #self.tool_frame.set_to_pose(pose)
@@ -186,7 +186,7 @@ class ABBCommunication(ClientContainer):
     def get_current_pose_cartesian_base(self):
         """ get the current tool pose from the queue in robot base coordinate system and set the tool_frame according to the pose """
         msg_current_pose_cart_base = self.get_from_rcv_queue(MSG_CURRENT_POSE_CARTESIAN_BASE)
-        if msg_current_pose_cart_base <> None:
+        if msg_current_pose_cart_base != None:
             pose = msg_current_pose_cart_base[1]
             self.current_tool0_pose = pose
             #self.tool_frame.set_to_pose(pose)
@@ -198,7 +198,7 @@ class ABBCommunication(ClientContainer):
     def get_current_pose_joint(self):
         """ get the current tool pose from the queue and set the tool_frame according to the pose """
         msg_current_pose_joint = self.get_from_rcv_queue(MSG_CURRENT_POSE_JOINT)
-        if msg_current_pose_joint <> None:
+        if msg_current_pose_joint != None:
             pose_joint = msg_current_pose_joint[1]
             self.current_joint_values = [m.degrees(pj) for pj in pose_joint]
             return pose_joint
@@ -356,20 +356,33 @@ class ABBCommunication(ClientContainer):
             self.send(MSG_COMMAND, cmd)
 
     # =================================================================================
-    def send_movel_relrool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None):
-        " send command for opening gripper through DO"
+    def send_movel_reltool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None, tcp = False):
+        " send command for moving relative to the tool"
         pose = [offset_axis_X, offset_axis_Y, offset_axis_Z, 0,0,0,0,0,0,0]
-        if int_arr == None:
-            cmd = [CMD_SENDMOVELRELTOOL] + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
+
+        # By default, this function will send a command to move relative to the current tool.
+        # Here we provide a way to move relative to the TCP, which can be helpful if your tool
+        # is oriented differently from the TCP.
+
+        rel_cmd = ""
+        if tcp:
+            rel_cmd = [CMD_SENDMOVELRELTCP]
         else:
-            cmd = [CMD_SENDMOVELRELTOOL] + pose + int_arr
+            rel_cmd = [CMD_SENDMOVELRELTOOL]
+
+        if int_arr == None:
+            cmd = rel_cmd + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
+        else:
+            cmd = rel_cmd + pose + int_arr
         self.send(MSG_COMMAND, cmd)
+        return cmd
 
     # =================================================================================
     def send_coordinated_gantry_move(self, pose, ext_axes, int_arr=None):
         """coordinated movement of two robots on a gantry.
         Send the same procedure to both robots at the same time, and they will sync their movements.
         Important: send the same X ganrty value!"""
+
         if int_arr == None:
             cmd = [CMD_COORDINATED_GANTRY_MOVE] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
         else:
