@@ -702,7 +702,7 @@ class ABBCommunication(ClientContainer):
         " send command for opening clamp through DO"
         speed = [speed1,speed2,0,0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_SET_SPEED_INPUT] + speed + [0, 0, 0, 0, self.float_arbitrary, 0]
+            cmd = [CMD_SET_SPEED_INPUT] + speed + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_SET_SPEED_INPUT] + speed + int_arr
 
