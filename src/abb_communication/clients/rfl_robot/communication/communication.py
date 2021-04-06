@@ -33,7 +33,6 @@ import math as m
 
 DEFAULT_AXES = [10000,10000,10000]
 
-
 class ABBCommunication(ClientContainer):
     """ The class ABBComm extends the Clientcontainer class.
     It can send and receive data from the ABB arm
@@ -371,7 +370,28 @@ class ABBCommunication(ClientContainer):
             cmd = [CMD_OPEN_GRIPPER] + pose + int_arr
         self.send(MSG_COMMAND, cmd)
    
-       def send_close_gripper(self, int_arr = None):
+    def send_close_gripper(self, int_arr = None):
+        " send command for closing gripper through DO"
+        pose = [0,0,0,0,0,0,0,0,0,0]
+        if int_arr == None:
+            cmd = [CMD_CLOSE_GRIPPER] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
+        else:
+            cmd = [CMD_CLOSE_GRIPPER] + pose + int_arr
+        self.send(MSG_COMMAND, cmd)       
+    
+    # =================================================================================
+    # Set command parameters
+    # =================================================================================
+
+    def set_rob_num(self,rob_num):
+        self.int_rob_num = rob_num
+        print(rob_num)
+
+    def set_tool_to_num(self, num_tool):
+        self.int_tool = num_tool
+
+    def set_wobj_to_num(self, num_wobj):
+        self.int_wobj = num_wobj
 
     def send_set_speed(self, speed1, speed2=10, int_arr = None):
         " send command for opening clamp through DO"
@@ -382,29 +402,6 @@ class ABBCommunication(ClientContainer):
             cmd = [CMD_SET_SPEED_INPUT] + speed + int_arr
 
         self.send(MSG_COMMAND, cmd)
-
-        " send command for closing gripper through DO"
-        pose = [0,0,0,0,0,0,0,0,0,0]
-        if int_arr == None:
-            cmd = [CMD_CLOSE_GRIPPER] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
-        else:
-            cmd = [CMD_CLOSE_GRIPPER] + pose + int_arr
-
-        self.send(MSG_COMMAND, cmd)
-    
-    # =================================================================================
-    # Set command parameters
-    # =================================================================================
-
-    def set_tool_to_num(self, num_tool):
-        self.int_tool = num_tool
-
-    def set_wobj_to_num(self, num_wobj):
-        self.int_wobj = num_wobj
-
-    def set_rob_num(self,rob_num):
-        self.int_rob_num = rob_num
-        print(rob_num)
 
     def set_speed_fast(self):
         self.int_speed = 2

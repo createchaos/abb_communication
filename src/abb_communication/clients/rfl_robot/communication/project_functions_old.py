@@ -13,9 +13,8 @@ def send_coordinated_gantry_move(self, pose, ext_axes, int_arr=None):
         print ("send_coordinated_gantry_move sent to Rapid!"), CMD_COORDINATED_GANTRY_MOVE
         self.send(MSG_COMMAND, cmd)
 
-    # =================================================================================
-    def send_pose_cartesian_home(self, int_arr=None):
-        """ send the "home" position as task target as defined in init """
+def send_pose_cartesian_home(self, int_arr=None):
+    """ send the "home" position as task target as defined in init """
     self.send_pose_cartesian(self.tool_plane_home_mid, int_arr)
 
 def send_pose_joint_home(self, int_arr=None):
@@ -302,27 +301,6 @@ def send_open_clamp(self, int_arr = None):
         cmd = [CMD_OPEN_CLAMP] + pose + [0, 0, 0, 0, self.float_arbitrary, 0]
     else:
         cmd = [CMD_OPEN_CLAMP] + pose + int_arr
-
-    self.send(MSG_COMMAND, cmd)
-
-    _plane(self, input1, input2, ext_axes_1, ext_axes_2, int_arr=None):
-    """ create command from plane or frame and send pick command to robot,
-    int_arr can be defined outside, or if None, default values are sent.
-    int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary, int_wobj] """
-
-    pose_1 = get_pose(self, input1)
-    if int_arr == None:
-        cmd = [CMD_STU_PLACE_1] + pose_1 + ext_axes_1 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
-    else:
-        cmd = [CMD_STU_PLACE_1] + pose_1 + ext_axes_1 + int_arr
-
-    self.send(MSG_COMMAND, cmd)
-
-    pose_2 = get_pose(self, input2)
-    if int_arr == None:
-        cmd = [CMD_STU_PLACE_2] + pose_2 + ext_axes_2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
-    else:
-        cmd = [CMD_STU_PLACE_2] + pose_2 + ext_axes_2 + int_arr
 
     self.send(MSG_COMMAND, cmd)
 
