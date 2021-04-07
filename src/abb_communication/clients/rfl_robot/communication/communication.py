@@ -695,7 +695,7 @@ class ABBCommunication(ClientContainer):
         " send command for opening gripper through DO"
         pose = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_OPEN_GRIPPER] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, 1]
+            cmd = [CMD_OPEN_GRIPPER] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_OPEN_GRIPPER] + pose + int_arr
         self.send(MSG_COMMAND, cmd)
@@ -726,7 +726,7 @@ class ABBCommunication(ClientContainer):
         " send command for closing gripper through DO"
         pose = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_CLOSE_GRIPPER] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, 1]
+            cmd = [CMD_CLOSE_GRIPPER] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
             cmd = [CMD_CLOSE_GRIPPER] + pose + int_arr
 
