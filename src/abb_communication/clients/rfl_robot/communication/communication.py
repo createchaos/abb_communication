@@ -12,6 +12,8 @@
 . . . . . . . . . . . . . . . . . .
 
 Created on 09.12.2016
+(This branch being used to work on ZeroWaste)
+(branched from Master April 6th, 2021)
 
 
 @author: kathrind, stefanap
