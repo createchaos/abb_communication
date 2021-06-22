@@ -46,12 +46,12 @@ class ABBCommunication(ClientContainer):
         self.tool_frame = Frame([0, 0, 0], [1, 0, 0], [0, 1, 0])
         # init values for command messages
         self.int_speed = 0 # speed: 0 = slow, 1 = mid, 2 = fast
-        self.float_duration = 0 #duration is not used, use velocity instead
-        self.int_zonedata = 10 # zonedata: in mm
-        self.int_tool = 0 # toolnumber: 0 = tool0, 1 = vacgrip_vert, 2 = hokuyo
-        self.int_wobj = 0 # wobjnumber: 0 = wobj0, 1 = wobj_common, 2 = wobj_base
-        self.int_rob_num = 0
-        self.float_arbitrary = 0 #robot number to access
+        self.float_duration = 0  # duration is not used, use velocity instead
+        self.int_zonedata = 10 # zonedata (in mm)
+        self.int_tool = 0 # tool number
+        self.int_wobj = 0 # wobj number
+        self.int_rob_num = 0 # robot number to send commands to
+        self.float_arbitrary = 0 # send an arbitrary float
 
         # home positions cartesian - to change!!!!! - stefana
         #self.tool_plane_home_mid = rg.Plane(rg.Point3d(1000,0,650), rg.Vector3d(1,0,0), rg.Vector3d(0,-1,0))
