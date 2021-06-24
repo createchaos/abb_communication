@@ -26,6 +26,7 @@ from messages.messagetypes import CMD_GO_TO_TASKTARGET, CMD_GO_TO_TASKTARGET_JOI
 from messages.messagetypes import CMD_STU_PICK, CMD_STU_PLACE_1, CMD_STU_PLACE_2
 from messages.messagetypes import CMD_MAS_PICK, CMD_MAS_PLACE, CMD_MAS_PICK_MAGAZINE, CMD_MAS_PLACE_MAGAZINE, CMD_LWS_DYNAMIC_PICKUP, CMD_RAPID_STOP, CMD_PULSEDO
 from messages.messagetypes import CMD_SENDMOVELRELTOOL, CMD_SENDMOVELRELTCP, CMD_COORDINATED_GANTRY_MOVE, CMD_SET_SPEED_INPUT
+from messages.messagetypes import CMD_OPEN_GRIPPER_ELECTRIC, CMD_CLOSE_GRIPPER_ELECTRIC, CMD_GRIPPER_ELECTRIC_POS, CMD_GRIPPER_ELECTRIC_REL
 
 import time
 import Rhino.Geometry as rg
@@ -386,36 +387,36 @@ class ABBCommunication(ClientContainer):
     # Target position is mm, defined from a zero that is set during gripper referencing
     # Gripping force defined by a percentage of the maximum force: 0=100%, 1=75%, 2=50%, 3=25%
     
-    def send_open_gripper_electric(self, int_arr = None, position, force=0):
+    def send_open_gripper_electric(self, int_arr=None, position=None, force=0):
         "Send command for opening electric gripper through DeviceNet"
         pose = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
             # pass gripper position as arbirary float
-            cmd = [CMD_OPEN_GRIPPER_ELECTRIC] + pose + [0, 0, 0, 0, position, 0, self.int_rob_num]
+            cmd = [CMD_OPEN_GRIPPER_ELECTRIC] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         self.send(MSG_COMMAND, cmd)
 
-    def send_close_gripper_electric(self, int_arr = None, position, force=0):
+    def send_close_gripper_electric(self, int_arr=None, position=None, force=0):
         "Send command for closing electric gripper through DeviceNet"
         pose = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
             # pass gripper position as arbirary float
-            cmd = [CMD_CLOSE_GRIPPER_ELECTRIC] + pose + [0, 0, 0, 0, position, 0, self.int_rob_num]
+            cmd = [CMD_CLOSE_GRIPPER_ELECTRIC] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         self.send(MSG_COMMAND, cmd)
     
-    def send_open_gripper_electric_rel(self, int_arr = None, position, force=0):
+    def send_gripper_electric_pos(self, int_arr=None, position=None, force=0):
         "Send command for opening electric gripper relative to its current position"
         pose = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
             # pass relative gripper position as arbirary float
-            cmd = [CMD_OPEN_GRIPPER_ELECTRIC_REL] + pose + [0, 0, 0, 0, position, 0, self.int_rob_num]
+            cmd = [CMD_GRIPPER_ELECTRIC_POS] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         self.send(MSG_COMMAND, cmd)
 
-    def send_close_gripper_electric(self, int_arr = None, position, force=0):
+    def send_gripper_electric_rel(self, int_arr=None, position=None, force=0):
         "Send command for closing electric gripper relative to its current position"
         pose = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
             # pass relative gripper position as arbirary float
-            cmd = [CMD_CLOSE_GRIPPER_ELECTRIC_REL] + pose + [0, 0, 0, 0, position, 0, self.int_rob_num]
+            cmd = [CMD_GRIPPER_ELECTRIC_REL] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         self.send(MSG_COMMAND, cmd)
 
     # =================================================================================
