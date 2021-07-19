@@ -427,6 +427,14 @@ class ABBCommunication(ClientContainer):
         cmd = [CMD_ACK_GRIPPER_ELECTRIC] + pose + [0, 0, 0, 0, 0, 0, self.int_rob_num]
         self.send(MSG_COMMAND, cmd)
 
+    def ack_gripper_electric(self, int_arr=None, position=None, force=0):
+        "Send command for closing electric gripper relative to its current position"
+        pose = [0,0,0,0,0,0,0,0,0,0]
+        if int_arr == None:
+            # pass relative gripper position as arbirary float
+            cmd = [CMD_ACK_GRIPPER_ELECTRIC] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
+        self.send(MSG_COMMAND, cmd)
+
     # =================================================================================
     # Set command parameters
     # =================================================================================

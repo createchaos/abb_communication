@@ -98,8 +98,13 @@ arm_cmd_types_str_array = ["CMD_IDLE_MODE", "CMD_GO_TO_JOINTTARGET_ABS", "CMD_GO
                            "CMD_GO_TO_TASKTARGET_JOINTS", "CMD_STU_PICK", "CMD_STU_PLACE_1", "CMD_STU_PLACE_2", \
                            "CMD_MAS_PICK", "CMD_MAS_PLACE", "CMD_MAS_PICK_MAGAZINE", "CMD_MAS_PLACE_MAGAZINE", \
                            "CMD_LWS_DYNAMIC_PICKUP", "CMD_RAPID_STOP", "CMD_PULSEDO", "CMD_SENDMOVELRELTOOL", \
+<<<<<<< Updated upstream
                            "CMD_OPEN_GRIPPER_ELECTRIC", "CMD_CLOSE_GRIPPER_ELECTRIC", "CMD_GRIPPER_ELECTRIC_POS", "CMD_GRIPPER_ELECTRIC_REL", "CMD_ACK_GRIPPER_ELECTRIC"  \
                            "CMD_SENDMOVELRELTCP", "CMD_COORDINATED_GANTRY_MOVE, " ]
+=======
+                           "CMD_OPEN_GRIPPER_ELECTRIC", "CMD_CLOSE_GRIPPER_ELECTRIC", "CMD_GRIPPER_ELECTRIC_POS", "CMD_GRIPPER_ELECTRIC_REL", \
+                           "CMD_SENDMOVELRELTCP", "CMD_COORDINATED_GANTRY_MOVE", "CMD_ACK_GRIPPER_ELECTRIC" ]
+>>>>>>> Stashed changes
 
 #===============================================================================
 # MESSAGE TYPES BASE
