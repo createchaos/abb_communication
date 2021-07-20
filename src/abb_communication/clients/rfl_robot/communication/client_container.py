@@ -121,7 +121,7 @@ class ClientContainer(object):
     # =================================================================================
     def start(self):
         """ connects both clients to the servers and starts their respective threads """
-        print "start!!!"
+        print("start!!!")
         #self.waypoint_counter = 0
         if self.running == False:
             ok1 = self.client_snd.connect_to_server()
