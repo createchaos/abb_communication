@@ -242,9 +242,7 @@ class ABBCommunication(ClientContainer):
         ext_axes values are optional, either in list format or as single float value for only one axis"""
         
         pose = self.get_pose(input)
-
         ext_axes = self.get_ext_axes(ext_axes_in)
-
 
         if int_arr == None:
             cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
@@ -261,11 +259,10 @@ class ABBCommunication(ClientContainer):
         ext_axes values are optional, either in list format or as single float value for only one axis"""
 
         pose = self.get_pose(input)
-
         ext_axes = self.get_ext_axes(ext_axes_in)
 
         if int_arr == None:
-            cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + int_arr
 
