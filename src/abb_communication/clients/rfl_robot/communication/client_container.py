@@ -87,6 +87,8 @@ class ClientContainer(object):
 
         self.ghenv = ghenv
 
+        self.buf = self.client_snd.buf
+
 
     # =================================================================================
     def get_connection_state(self):
@@ -124,9 +126,11 @@ class ClientContainer(object):
         print("start!!!")
         #self.waypoint_counter = 0
         if self.running == False:
+            print("in first if statement")
             ok1 = self.client_snd.connect_to_server()
             ok2 = self.client_rcv.connect_to_server()
             if ok1 and ok2:
+                print("in second if statement")
                 LOG.info("OK CONNECTED")
                 self.client_snd.thread.start() #self.client_snd.start()  # start sending from send queue
                 self.client_rcv.thread.start() #self.client_rcv.start()  # start reading in a loop
@@ -152,6 +156,7 @@ class ClientContainer(object):
     # =================================================================================
     def put_on_snd_queue(self, msg_id, msg):
         self.SEND_QUEUE.put((msg_id, msg))
+        print(msg)
 
     # =================================================================================
     def get_from_snd_queue(self):

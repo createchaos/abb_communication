@@ -18,7 +18,19 @@ import struct
 import time
 import logging
 
+"""
+base_path = 'C:/Users/User/Desktop'
+filename = 'testLog.log'
+path = os.path.join(bath_path, filename)
+"""
+#path = 'C:/Users/User/Desktop/testLog.log'
+
 LOG = logging.getLogger('abb_communication.clients.rfl_robot.communication.client_robot')
+#LOG.setLevel(logging.DEBUG)
+#logHandler = logging.StreamHandler()
+
+#logHandler = logging.FileHandler(path, encoding='utf-8')
+#LOG.addHandler(logHandler)
 
 
 #===============================================================================
@@ -30,6 +42,8 @@ class ClientRobot(ClientGeneric): #former: inherited from Thread
     def __init__(self, parent, host, port,  **params):
 
         ClientGeneric.__init__(self, parent, host, port,  **params)
+        print("we can print from client_robot")
+        self.buf = None
 
     #===========================================================================
     def send(self, msg_type, msg = None):
@@ -78,8 +92,11 @@ class ClientRobot(ClientGeneric): #former: inherited from Thread
         msg_snd_len = struct.calcsize(str(len(cmd)) + "f") + 12
         params = [msg_snd_len, MSG_COMMAND] + self.get_header() + cmd
         LOG.debug("_send_command: params=%s", params)
-        buf = struct.pack(self.byteorder + "2Q" + "3I" + "i" + "10f" + "if2if2i", *params)
+        buf = struct.pack(self.byteorder + "2Q" + "3I" + "i" + "20f" + "if2if2i", *params)
+        buf_log = struct.unpack(self.byteorder + "2Q" + "3I" + "i" + "20f" + "if2if2i", buf)
         self.socket.send(buf)
+        LOG.debug("_send_command: buf=%s", buf_log)
+        self.buf = buf
 
     #===========================================================================
     def process(self, msg_len, msg_type, raw_msg):

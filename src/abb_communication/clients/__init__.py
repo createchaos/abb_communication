@@ -1,9 +1,9 @@
-'''
-. . . . . . . . . . . . . . . . . . 
+"""
+. . . . . . . . . . . . . . . . . .
 .                                 .
 .   <<><><>    <<><><>  <<        .
 .   <<    ><   <<       <<        .
-.   <<><><>    <<><><   <<        .  
+.   <<><><>    <<><><   <<        .
 .   <<  ><     <<       <<        .
 .   <<   <>    <<       <<        .
 .   <<    ><   <<       <<><><>   .
@@ -13,8 +13,8 @@
 
 Created on 09.12.2016
 
-@author: kathrind, stefanap 
-'''
+@author: kathrind, stefanap
+"""
 
 from rfl_robot import Robot
 from rfl_robot import Robot4x

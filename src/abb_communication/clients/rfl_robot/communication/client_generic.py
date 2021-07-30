@@ -200,6 +200,7 @@ class ClientGeneric(): #former: inherited from Thread
 
         "4. pass message id and raw message to process method "
         ok = self.process(msg_length, msg_type, raw_msg)
+        print(ok)
         return ok
 
     #===========================================================================

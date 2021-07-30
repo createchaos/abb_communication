@@ -15,7 +15,7 @@ Message always consists of uint4: length of message, uint4: type of message, mes
 
 MSG_INVALID = 0
 
-MSG_COMMAND = 1 # [cmd_type, val1-val7 (joint or robtarget), velocity, duration, zone, tool, arbitrary]
+MSG_COMMAND = 1 # [cmd_type, val1-val20 (up to 2 robtargets + ext axes poses), velocity, duration, zone, tool, arbitrary, wobj, robnum]
 MSG_STOP = 2
 MSG_IDLE = 3
 MSG_COMMAND_RECEIVED = 4 # [counter]
@@ -93,6 +93,9 @@ CMD_CLOSE_GRIPPER_ELECTRIC_2 = 66
 CMD_GRIPPER_ELECTRIC_POS_2 = 67
 CMD_GRIPPER_ELECTRIC_REL_2 = 68
 CMD_ACK_GRIPPER_ELECTRIC_2 = 69
+CMD_GET_GRIPPER_POSITION_1 = 70
+CMD_GET_GRIPPER_POSITION_2 = 71
+CMD_SEND_MOVE_CIRCULAR = 72
 
 
 arm_cmd_types_str_array = ["CMD_IDLE_MODE", "CMD_GO_TO_JOINTTARGET_ABS", "CMD_GO_TO_TASKTARGET", \
@@ -105,7 +108,8 @@ arm_cmd_types_str_array = ["CMD_IDLE_MODE", "CMD_GO_TO_JOINTTARGET_ABS", "CMD_GO
                            "CMD_LWS_DYNAMIC_PICKUP", "CMD_RAPID_STOP", "CMD_PULSEDO", "CMD_SENDMOVELRELTOOL", \
                            "CMD_OPEN_GRIPPER_ELECTRIC_1", "CMD_CLOSE_GRIPPER_ELECTRIC_1", "CMD_GRIPPER_ELECTRIC_POS_1", "CMD_GRIPPER_ELECTRIC_REL_1", \
                            "CMD_OPEN_GRIPPER_ELECTRIC_2", "CMD_CLOSE_GRIPPER_ELECTRIC_2", "CMD_GRIPPER_ELECTRIC_POS_2", "CMD_GRIPPER_ELECTRIC_REL_2", \
-                           "CMD_SENDMOVELRELTCP", "CMD_COORDINATED_GANTRY_MOVE", "CMD_ACK_GRIPPER_ELECTRIC_1", "CMD_ACK_GRIPPER_ELECTRIC_2" ]
+                           "CMD_SENDMOVELRELTCP", "CMD_COORDINATED_GANTRY_MOVE", "CMD_ACK_GRIPPER_ELECTRIC_1", "CMD_ACK_GRIPPER_ELECTRIC_2", \
+                           "CMD_GET_GRIPPER_POSITION_1", "CMD_GET_GRIPPER_POSITION_1", "CMD_SEND_MOVE_CIRCULAR" ]
 
 #===============================================================================
 # MESSAGE TYPES BASE

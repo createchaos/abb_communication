@@ -28,7 +28,7 @@ from messages.messagetypes import CMD_MAS_PICK, CMD_MAS_PLACE, CMD_MAS_PICK_MAGA
 from messages.messagetypes import CMD_SENDMOVELRELTOOL, CMD_SENDMOVELRELTCP, CMD_COORDINATED_GANTRY_MOVE, CMD_SET_SPEED_INPUT
 from messages.messagetypes import CMD_OPEN_GRIPPER_ELECTRIC_1, CMD_CLOSE_GRIPPER_ELECTRIC_1, CMD_GRIPPER_ELECTRIC_POS_1, CMD_GRIPPER_ELECTRIC_REL_1, CMD_ACK_GRIPPER_ELECTRIC_1
 from messages.messagetypes import CMD_OPEN_GRIPPER_ELECTRIC_2, CMD_CLOSE_GRIPPER_ELECTRIC_2, CMD_GRIPPER_ELECTRIC_POS_2, CMD_GRIPPER_ELECTRIC_REL_2, CMD_ACK_GRIPPER_ELECTRIC_2
-
+from messages.messagetypes import CMD_GET_GRIPPER_POSITION_1, CMD_GET_GRIPPER_POSITION_2, CMD_SEND_MOVE_CIRCULAR
 
 import time
 import Rhino.Geometry as rg
@@ -208,10 +208,11 @@ class ABBCommunication(ClientContainer):
     def send_stop(self, int_arr = None):
         """ send stop to robot """
         pose = [0,0,0,0,0,0,0,0,0,0]
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_RAPID_STOP] + pose + [0, 0, 0, 0, self.float_arbitrary, 0]
+            cmd = [CMD_RAPID_STOP] + pose + pose2 + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
-            cmd = [CMD_RAPID_STOP] + pose + int_arr
+            cmd = [CMD_RAPID_STOP] + pose + pose2 + int_arr
         self.send(MSG_COMMAND, cmd)
 
     def send_single_move_command(self, input, ext_axes, num_cmd, int_arr = None):
@@ -229,10 +230,12 @@ class ABBCommunication(ClientContainer):
             pose_axes = pose + ext_axes
             self.debug_print = pose_axes
 
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
+
         if int_arr == None:
-            cmd = [num_cmd] + pose_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [num_cmd] + pose_axes + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
-            cmd = [num_cmd] + pose_axes + int_arr
+            cmd = [num_cmd] + pose_axes + pose2 + int_arr
 
         self.send(MSG_COMMAND, cmd)
         return cmd
@@ -247,11 +250,12 @@ class ABBCommunication(ClientContainer):
 
         ext_axes = self.get_ext_axes(ext_axes_in)
 
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
 
         if int_arr == None:
-            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
+            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
-            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + int_arr
+            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + pose2 + int_arr
 
         self.send(MSG_COMMAND, cmd)
         return cmd
@@ -263,13 +267,14 @@ class ABBCommunication(ClientContainer):
         ext_axes values are optional, either in list format or as single float value for only one axis"""
 
         pose = self.get_pose(input)
-
         ext_axes = self.get_ext_axes(ext_axes_in)
 
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
+
         if int_arr == None:
-            cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
-            cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + int_arr
+            cmd = [CMD_GO_TO_TASKTARGET_JOINTS] + pose + ext_axes + pose2 + int_arr
 
         self.send(MSG_COMMAND, cmd)
         return cmd
@@ -281,13 +286,14 @@ class ABBCommunication(ClientContainer):
         ext_axes values are optional, either in list format or as single float value for only one axis"""
 
         pose = self.get_pose(input)
-
         ext_axes = self.get_ext_axes(ext_axes_in)
 
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
+
         if int_arr == None:
-            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
-            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + int_arr
+            cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + pose2 + int_arr
 
         self.send(MSG_COMMAND, cmd)
         return cmd
@@ -316,37 +322,43 @@ class ABBCommunication(ClientContainer):
 
     def send_axes_relative(self, axes, int_arr=None):
         """ relative joint axes commands for the abb arm """
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
+
         if int_arr:
-            cmd = [CMD_GO_TO_JOINTTARGET_REL] + axes + [0] + int_arr
+            cmd = [CMD_GO_TO_JOINTTARGET_REL] + axes + [0] + pose2 + int_arr
         else:
-            cmd = [CMD_GO_TO_JOINTTARGET_REL] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_GO_TO_JOINTTARGET_REL] + axes + [0] + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
 
         self.send(MSG_COMMAND, cmd)
         return cmd
 
     def send_axes_absolute(self, axes, int_arr=None):
         """ absolute joint axes commands for the arm """
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
+
         if int_arr:
-            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + int_arr
+            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + pose2 + int_arr
         else:
             # add rob_num to every function
-            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
+            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
+            print("this text has changed!")
         self.send(MSG_COMMAND, cmd)
 
     def send_axes_absolute_list(self, axes_list, int_arr=None):
         """ absolute joint axes commands for the arm """
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
 
         for axes in axes_list:
             if int_arr:
-                cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + int_arr
+                cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + pose2 + int_arr
             else:
-                cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
+                cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
 
     def send_movel_reltool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None, tcp = False):
         " send command for moving relative to the tool"
         pose = [offset_axis_X, offset_axis_Y, offset_axis_Z, 0,0,0,0,0,0,0]
-
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
         # By default, this function will send a command to move relative to the current tool.
         # Here we provide a way to move relative to the TCP, which can be helpful if your tool
         # is oriented differently from the TCP.
@@ -358,28 +370,31 @@ class ABBCommunication(ClientContainer):
             rel_cmd = [CMD_SENDMOVELRELTOOL]
 
         if int_arr == None:
-            cmd = rel_cmd + pose + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
+            cmd = rel_cmd + pose + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
         else:
-            cmd = rel_cmd + pose + int_arr
+            cmd = rel_cmd + pose + pose2 + int_arr
         self.send(MSG_COMMAND, cmd)
         return cmd
 
     def send_open_gripper(self, int_arr = None):
         " send command for opening gripper through DO"
         pose = [0,0,0,0,0,0,0,0,0,0]
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_OPEN_GRIPPER] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
+            cmd = [CMD_OPEN_GRIPPER] + pose + pose2 + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
-            cmd = [CMD_OPEN_GRIPPER] + pose + int_arr
+            cmd = [CMD_OPEN_GRIPPER] + pose + pose2 + int_arr
         self.send(MSG_COMMAND, cmd)
+        print(self.buf)
 
     def send_close_gripper(self, int_arr = None):
         " send command for closing gripper through DO"
         pose = [0,0,0,0,0,0,0,0,0,0]
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
         if int_arr == None:
-            cmd = [CMD_CLOSE_GRIPPER] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
+            cmd = [CMD_CLOSE_GRIPPER] + pose + pose2 + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
         else:
-            cmd = [CMD_CLOSE_GRIPPER] + pose + int_arr
+            cmd = [CMD_CLOSE_GRIPPER] + pose + pose2 + int_arr
         self.send(MSG_COMMAND, cmd)
 
     # =================================================================================
@@ -392,50 +407,54 @@ class ABBCommunication(ClientContainer):
     def send_open_gripper_electric(self, gripper=1, force=0):
         "Send command for opening electric gripper through DeviceNet"
         pose = [0,0,0,0,0,0,0,0,0,0]
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
         # Force is passed via float_arbitrary
         if gripper == 2:
-            cmd = [CMD_OPEN_GRIPPER_ELECTRIC_2] + pose + [0, 0, 0, 0, force, 0, self.int_rob_num]
+            cmd = [CMD_OPEN_GRIPPER_ELECTRIC_2] + pose + pose2 + [0, 0, 0, 0, force, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
         else:
-            cmd = [CMD_OPEN_GRIPPER_ELECTRIC_1] + pose + [0, 0, 0, 0, force, 0, self.int_rob_num]
+            cmd = [CMD_OPEN_GRIPPER_ELECTRIC_1] + pose + pose2 + [0, 0, 0, 0, force, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
 
     def send_close_gripper_electric(self, gripper=1, force=0):
         "Send command for closing electric gripper through DeviceNet"
         pose = [0,0,0,0,0,0,0,0,0,0]
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
         # Force is passed via float_arbitrary
         if gripper == 2:
-            cmd = [CMD_CLOSE_GRIPPER_ELECTRIC_2] + pose + [0, 0, 0, 0, force, 0, self.int_rob_num]
+            cmd = [CMD_CLOSE_GRIPPER_ELECTRIC_2] + pose + pose2 + [0, 0, 0, 0, force, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
         else:
-            cmd = [CMD_CLOSE_GRIPPER_ELECTRIC_1] + pose + [0, 0, 0, 0, force, 0, self.int_rob_num]
+            cmd = [CMD_CLOSE_GRIPPER_ELECTRIC_1] + pose + pose2 + [0, 0, 0, 0, force, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
 
     def send_gripper_electric_pos(self, gripper=1, position=3.0, force=0):
         "Send command for setting electric gripper to a specific current position"
         pose = [0,0,0,0,0,0,0,0,0,0]
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
         # Pass relative gripper position and force via float_arbitrary.
         # The values will be separated again on the RAPID side.
         position_and_force = position + float(100*(force+1))
         print(position_and_force)
         if gripper == 2:
-            cmd = [CMD_GRIPPER_ELECTRIC_POS_2] + pose + [0, 0, 0, 0, position_and_force, 0, self.int_rob_num]
+            cmd = [CMD_GRIPPER_ELECTRIC_POS_2] + pose + pose2 + [0, 0, 0, 0, position_and_force, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
         else:
-            cmd = [CMD_GRIPPER_ELECTRIC_POS_1] + pose + [0, 0, 0, 0, position_and_force, 0, self.int_rob_num]
+            cmd = [CMD_GRIPPER_ELECTRIC_POS_1] + pose + pose2 + [0, 0, 0, 0, position_and_force, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
 
     def send_gripper_electric_rel(self, gripper=1, position=1.0, force=0):
         "Send command for closing electric gripper relative to its current position"
         pose = [0,0,0,0,0,0,0,0,0,0]
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
         # Pass relative gripper position and force via float_arbitrary.
         # The values will be separated again on the RAPID side.
         position_and_force = position + float(100*(force+1))
         if gripper == 2:
-            cmd = [CMD_GRIPPER_ELECTRIC_REL_2] + pose + [0, 0, 0, 0, position_and_force, 0, self.int_rob_num]
+            cmd = [CMD_GRIPPER_ELECTRIC_REL_2] + pose + pose2 + [0, 0, 0, 0, position_and_force, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
         else:
-            cmd = [CMD_GRIPPER_ELECTRIC_REL_1] + pose + [0, 0, 0, 0, position_and_force, 0, self.int_rob_num]
+            cmd = [CMD_GRIPPER_ELECTRIC_REL_1] + pose + pose2 + [0, 0, 0, 0, position_and_force, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
 
     """
@@ -451,13 +470,32 @@ class ABBCommunication(ClientContainer):
     def ack_gripper_electric(self, gripper=1):
         "Send command for closing electric gripper relative to its current position"
         pose = [0,0,0,0,0,0,0,0,0,0]
+        pose2 = [0,0,0,0,0,0,0,0,0,0]
         if gripper == 2:
             # pass relative gripper position as arbirary float
-            cmd = [CMD_ACK_GRIPPER_ELECTRIC_2] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
+            cmd = [CMD_ACK_GRIPPER_ELECTRIC_2] + pose + pose2 + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
         else:
-            cmd = [CMD_ACK_GRIPPER_ELECTRIC_1] + pose + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
+            cmd = [CMD_ACK_GRIPPER_ELECTRIC_1] + pose + pose2 + [0, 0, 0, 0, self.float_arbitrary, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
+    """
+    # =================================================================================
+    # Get gripper values
+    # =================================================================================
+
+    def get_gripper_electric_pos(self, gripper=1):
+        # get the current position of the Schunk gripper
+        if gripper == 1:
+            msg_current_gripper_pos = self.get_from_rcv_queue(MSG_CURRENT_GRIPPER_POS_1)
+        else:
+            msg_current_gripper_pos = self.get_from_rcv_queue(MSG_CURRENT_GRIPPER_POS_2)
+
+        if msg_current_gripper_pos != None:
+            gripper_pos = msg_current_gripper_pos[1]
+            return gripper_pos
+        else:
+            return None
+    """
 
     # =================================================================================
     # Set command parameters
@@ -465,7 +503,6 @@ class ABBCommunication(ClientContainer):
 
     def set_rob_num(self,rob_num):
         self.int_rob_num = rob_num
-        print(rob_num)
 
     def set_tool_to_num(self, num_tool):
         self.int_tool = num_tool
