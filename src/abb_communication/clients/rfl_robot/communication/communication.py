@@ -376,6 +376,23 @@ class ABBCommunication(ClientContainer):
         self.send(MSG_COMMAND, cmd)
         return cmd
 
+
+    def send_movec_tcp(self, midpt_plane, endpt_plane, midpt_ext_axes_in=DEFAULT_AXES, endpt_ext_axes_in=DEFAULT_AXES, int_arr=None):
+        midpt_pose = self.get_pose(midpt_plane)
+        endpt_pose = self.get_pose(endpt_plane)
+
+        midpt_ext_axes = self.get_ext_axes(midpt_ext_axes_in)
+        endpt_ext_axes = self.get_ext_axes(endpt_ext_axes_in)
+
+
+        if int_arr == None:
+            cmd = [CMD_SEND_MOVE_CIRCULAR] + midpt_pose + midpt_ext_axes + endpt_pose + endpt_ext_axes + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
+        else:
+            cmd = [CMD_SEND_MOVE_CIRCULAR] + midpt_pose + midpt_ext_axes + endpt_pose + endpt_ext_axes + int_arr
+
+        self.send(MSG_COMMAND, cmd)
+        return cmd
+
     def send_open_gripper(self, int_arr = None):
         " send command for opening gripper through DO"
         pose = [0,0,0,0,0,0,0,0,0,0]
