@@ -294,29 +294,25 @@ class ABBCommunication(ClientContainer):
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary] """
 
-        #####################################add case with single value list ####################################################
-
         ext_axes_list = self.get_ext_axes_list(ext_axes_in,inputs)
-        print (ext_axes_list)
         for i, input in enumerate(inputs):
             self.send_pose_cartesian(input, ext_axes_list[i], int_arr)
 
-        # =================================================================================
-
-    def send_pose_cartesian_joints_list(self, planes, ext_axes_list, int_arr=None):
+    def send_pose_cartesian_joints_list(self, inputs, ext_axes_in=DEFAULT_AXES, int_arr=None):
         """ create command from plane and send task target to robot,
         int_arr can be defined outside, or if None, default values are sent.
         int_arr = [int_speed, float_duration, int_zonedata, int_tool, float_arbitrary] """
-
-        for i, plane in enumerate (planes):
-            self.send_pose_cartesian_joints(plane, ext_axes_list[i], int_arr)
+        ext_axes_list = self.get_ext_axes_list(ext_axes_in,inputs)
+        for i, input in enumerate(inputs):
+            self.send_pose_cartesian_joints(input, ext_axes_list[i], int_arr)
+            print("test")
 
     def send_axes_relative(self, axes, int_arr=None):
         """ relative joint axes commands for the abb arm """
         if int_arr:
             cmd = [CMD_GO_TO_JOINTTARGET_REL] + axes + [0] + int_arr
         else:
-            cmd = [CMD_GO_TO_JOINTTARGET_REL] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj]
+            cmd = [CMD_GO_TO_JOINTTARGET_REL] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
 
         self.send(MSG_COMMAND, cmd)
         return cmd
@@ -326,8 +322,7 @@ class ABBCommunication(ClientContainer):
         if int_arr:
             cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + int_arr
         else:
-            # add rob_num to every function
-            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
+            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_rob_num]
         self.send(MSG_COMMAND, cmd)
 
     def send_axes_absolute_list(self, axes_list, int_arr=None):
@@ -337,7 +332,7 @@ class ABBCommunication(ClientContainer):
             if int_arr:
                 cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + int_arr
             else:
-                cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0]
+                cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
 
     def send_movel_reltool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None, tcp = False):
