@@ -78,12 +78,12 @@ class ClientRobot(ClientGeneric): #former: inherited from Thread
         msg_snd_len = struct.calcsize(str(len(cmd)) + "f") + 12
         params = [msg_snd_len, MSG_COMMAND] + self.get_header() + cmd
         LOG.debug("_send_command: params=%s", params)
-        buf = struct.pack(self.byteorder + "2Q" + "3I" + "i" + "10f" + "if2if2i", *params)
+        buf = struct.pack(self.byteorder + "2Q" + "3I" + "i" + "20f" + "if2if2i", *params)
         self.socket.send(buf)
 
     #===========================================================================
     def process(self, msg_len, msg_type, raw_msg):
-        """ The transmission protocol for messages is 
+        """ The transmission protocol for messages is
         [length msg in bytes] [msg identifier] [other bytes which will be read out according to msg identifier] """
         try:
             self.parent.lock.acquire()
@@ -143,6 +143,7 @@ class ClientRobot(ClientGeneric): #former: inherited from Thread
         """ count waypoints which are sent back by the Actuator and publish according state """
         self.publish_state(STATE_READY_TO_RECEIVE)
         self.set_stack_counter(+1)
+        LOG.debug("Process_msg_cmd_received: stack_counter +1")
         "Parent will tell the sender socket to handle the stack"
         self.parent.handle_stack()
 
@@ -153,6 +154,9 @@ class ClientRobot(ClientGeneric): #former: inherited from Thread
     def handle_stack(self):
         try:
             self.parent.lock.acquire()
+            LOG.debug("self.parent.stack len: %i" % (len(self.parent.stack)))
+            LOG.debug("self.stack_size: %i" %(self.stack_size))
+            LOG.deubg("self.get_stack_counter: %i" % (self.get_stack_counter))
 
             if len(self.parent.stack) and self.get_stack_counter() == 0 :
                 " The actuator is ready to be programmed, and receives first packet from the stack "
@@ -163,6 +167,7 @@ class ClientRobot(ClientGeneric): #former: inherited from Thread
                     self.publish_state(STATE_EXECUTING)
                     self._send_command(cmd)
                     self.set_stack_counter(-1)
+                    LOG.debug("handle_stack: stack_counter -1")
             elif len(self.parent.stack) and -self.stack_size <= self.get_stack_counter() < 0 :
                 " The actuator is currently STATE_EXEC, but ready to receive another packet from the stack "
                 LOG.info("Socket: The actuator needs to accomplish %i step%s in total." % (len(self.parent.stack), "s" if len(self.parent.stack) > 1 else ""))
@@ -171,6 +176,7 @@ class ClientRobot(ClientGeneric): #former: inherited from Thread
                 self.publish_state(STATE_EXECUTING)
                 self._send_command(cmd)
                 self.set_stack_counter(-1)
+                LOG.debug("handle_stack: stack_counter -1")
             else: # len(self.parent.stack) == 0 and self.stack_counter < 0
                 " The actuator must still accomplish some commands and return them "
                 LOG.info("Socket: The actuator has still %d step%s to accomplish." % (len(self.parent.stack) + self.get_stack_counter() * -1, "s" if len(self.parent.stack) > 1 else ""))

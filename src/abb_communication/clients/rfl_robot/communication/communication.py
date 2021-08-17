@@ -258,6 +258,7 @@ class ABBCommunication(ClientContainer):
             cmd = [CMD_GO_TO_TASKTARGET] + pose + ext_axes + pose2 + int_arr
 
         self.send(MSG_COMMAND, cmd)
+        time.sleep(0.1)
         return cmd
 
     def send_pose_cartesian_joints(self, input, ext_axes_in = DEFAULT_AXES, int_arr=None):
@@ -355,7 +356,7 @@ class ABBCommunication(ClientContainer):
                 cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
 
-    def send_movel_reltool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None, tcp = False):
+    def send_movel_reltool(self, offset_axis_X=0, offset_axis_Y=0, offset_axis_Z=0, int_arr = None, tcp = False):
         " send command for moving relative to the tool"
         pose = [offset_axis_X, offset_axis_Y, offset_axis_Z, 0,0,0,0,0,0,0]
         pose2 = [0,0,0,0,0,0,0,0,0,0]
@@ -370,7 +371,7 @@ class ABBCommunication(ClientContainer):
             rel_cmd = [CMD_SENDMOVELRELTOOL]
 
         if int_arr == None:
-            cmd = rel_cmd + pose + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
+            cmd = rel_cmd + pose + pose2 + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_wobj, self.int_rob_num]
         else:
             cmd = rel_cmd + pose + pose2 + int_arr
         self.send(MSG_COMMAND, cmd)
