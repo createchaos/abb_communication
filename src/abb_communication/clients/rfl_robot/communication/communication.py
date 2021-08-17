@@ -322,7 +322,7 @@ class ABBCommunication(ClientContainer):
         if int_arr:
             cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + int_arr
         else:
-            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_rob_num]
+            cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
         self.send(MSG_COMMAND, cmd)
 
     def send_axes_absolute_list(self, axes_list, int_arr=None):
@@ -332,7 +332,7 @@ class ABBCommunication(ClientContainer):
             if int_arr:
                 cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + int_arr
             else:
-                cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, self.int_rob_num]
+                cmd = [CMD_GO_TO_JOINTTARGET_ABS] + axes + [0] + [self.int_speed, self.float_duration, self.int_zonedata, self.int_tool, self.float_arbitrary, 0, self.int_rob_num]
             self.send(MSG_COMMAND, cmd)
 
     def send_movel_reltool(self, offset_axis_X, offset_axis_Y, offset_axis_Z, int_arr = None, tcp = False):
